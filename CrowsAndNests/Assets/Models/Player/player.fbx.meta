@@ -27,6 +27,9 @@ ModelImporter:
   - first:
       74: 8349542763059015795
     second: Armature|Walk
+  - first:
+      74: 4419341551624498096
+    second: Armature|ArmatureAction.003
   externalObjects:
   - first:
       type: UnityEngine:Material

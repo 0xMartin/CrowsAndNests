@@ -8,12 +8,12 @@ public class PlayerMovement : MonoBehaviour
     /********************************************************************/
     // nastaveni pohybu (defaultni hodnoty pro mass = 10.0)
     [Header("Movement")]
-    public float moveForce = 40.0f;
+    public float moveForce = 100.0f;
     public float maxMoveSpeed = 8.0f;
     public float groundDrag = 0.5f;
     public float jumpForce = 190.0f;
     public float jumpCooldown = 1.2f;
-    public float airMultiplier = 12.0f;
+    public float airMultiplier = 6.0f;
     public float rotationSpeed = 4.0f;
     public float gravity = 40.0f;
 
