@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float groundDrag = 0.5f;
     public float jumpForce = 190.0f;
     public float jumpCooldown = 1.2f;
-    public float airMultiplier = 6.0f;
+    public float airMultiplier = 7.0f;
     public float rotationSpeed = 4.0f;
     public float gravity = 40.0f;
 
@@ -99,8 +99,6 @@ public class PlayerMovement : MonoBehaviour
 
         grounded_last = grounded;
     }
-
-
 
     private void FixedUpdate()
     {
