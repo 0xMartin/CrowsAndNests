@@ -30,6 +30,15 @@ ModelImporter:
   - first:
       74: 4419341551624498096
     second: Armature|ArmatureAction.003
+  - first:
+      74: 1245882690682072010
+    second: Idle_2
+  - first:
+      74: -3548273549459496330
+    second: Idle_3
+  - first:
+      74: 6720303635017113406
+    second: Attack
   externalObjects:
   - first:
       type: UnityEngine:Material
