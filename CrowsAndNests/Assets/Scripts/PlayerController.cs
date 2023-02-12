@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     /********************************************************************/
     // reference na externi objekty
     [Header("References")]
-    public Camera camera; /** Kamera 3D osoby ktera sleduje hrace */
+    public Camera playerCamera; /** Kamera 3D osoby ktera sleduje hrace */
     public ParticleSystem dustParticle; /** Dust particly ktere se aktivouji pri dopadu hrace na zem */
     
     /********************************************************************/
@@ -149,7 +149,7 @@ public class PlayerController : MonoBehaviour
 
         // vypocita smer pohybu
         direction = new Vector3(horizontalInput, 0, verticalInput);
-        direction = camera.transform.TransformDirection(direction);
+        direction = playerCamera.transform.TransformDirection(direction);
         direction.y = 0;
         direction = direction.normalized;
 
@@ -165,6 +165,14 @@ public class PlayerController : MonoBehaviour
 
         // pohyb kdyz je hrace na zemi
         rb.AddForce(direction.normalized * moveForce * 10f, ForceMode.Force);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // doslo ke kolizi z jim objektem -> pokud je hrac ve vzduchu vynujele jeho vektro pohybu
+        if(!grounded) {
+            direction = new Vector3(0, 0, 0);
+        }
     }
 
     private void Jump()
