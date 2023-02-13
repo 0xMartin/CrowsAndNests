@@ -43,6 +43,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Hat
+    second: {fileID: 2100000, guid: 60901936c4c2b8b438cda27697056615, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hat2
+    second: {fileID: 2100000, guid: 4c71fad57b07da543b984d1adf8779cb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: beak_inside
     second: {fileID: 2100000, guid: 736649edc97308e43a40c4e1e3e8ac3d, type: 2}
   - first:
