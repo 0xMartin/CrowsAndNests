@@ -12,7 +12,6 @@ public class BreakableEgg : MonoBehaviour
  
     private bool isBroken;
 
-
     private void Start() {
         isBroken = false;
 
@@ -50,6 +49,10 @@ public class BreakableEgg : MonoBehaviour
             rg.isKinematic = false;
             rg.AddExplosionForce(Random.Range(minForce, maxForce), transform.position, radius);
         }
+    }
+
+    public bool isEggBroken() {
+        return this.isBroken;
     }
 
 }
