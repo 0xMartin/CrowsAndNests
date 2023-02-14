@@ -6,8 +6,11 @@
 
 <img src="./Doc/5.png">
 
-## TODO
+## TODO - cesta k uspesnemu produktu
 - [X] Herni postava
+- [ ] Design
+  - [ ] Vytvorit ikonu hry
+  - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
 - [ ] Zvukove efekty
   - [ ] Vrana
     - [ ] Chuze
