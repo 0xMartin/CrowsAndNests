@@ -32,7 +32,7 @@
     - [ ] Arena - soundtrack3
 - [ ] Efekty sceny
   - [ ] Pridani mlhy
-  - [ ] Particli v prostredi
+  - [ ] Particly v prostredi
   - [ ] Nocni stena
   - [ ] Vyladeni osvetleni
   - [ ] Skybox (noc/vesmir/...)
