@@ -474,7 +474,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 6
+      scalar: 7
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1172,7 +1172,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 350
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5319,7 +5319,7 @@ MonoBehaviour:
   jumpForce: 190
   jumpCooldown: 1.2
   airMultiplier: 7
-  rotationSpeed: 4
+  rotationSpeed: 3
   gravity: 40
   jumpKey: 32
   mouseButtonAttack: 0

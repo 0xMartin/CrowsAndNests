@@ -12,9 +12,8 @@ public class PlayerController : MonoBehaviour
     public float maxMoveSpeed = 6.0f;
     public float groundDrag = 0.5f;
     public float jumpForce = 190.0f;
-    public float jumpCooldown = 1.2f;
     public float airMultiplier = 7.0f;
-    public float rotationSpeed = 4.0f;
+    public float rotationSpeed = 3.0f;
     public float gravity = 40.0f;
 
     /********************************************************************/
@@ -34,19 +33,22 @@ public class PlayerController : MonoBehaviour
     
     /********************************************************************/
     // lokalni promenne
-    private Quaternion targetRotation;
-    private Vector3 direction;
+    private Quaternion targetRotation; /** Pro plynulou rotaci hrace po smeru pohybu */
+    private Vector3 direction; /** Aktualni smer pohybu */
 
-    private Rigidbody rb;
-    private Animator animator;
+    private Rigidbody rb; /** Rigidbody hrace */
+    private Animator animator; /** Animator controller */
 
-    private float horizontalInput, verticalInput;
+    private float horizontalInput, verticalInput; /** Ovladani pohybu hrace */
 
-    private bool readyToJump;
-    private bool inAttack;
+    private bool inJump; /** True -> hrac prave skace */
+    private Vector3 jumpDir; /** Smer skoku */
+    private bool jumpBounce; /** True -> odraz od prekazky ve vzduchu, pri srazce z nejakym objektem */
 
-    private bool grounded;
-    private bool grounded_last;
+    private bool inAttack; /** True -> hrace prave utoci */
+
+    private bool grounded; /** True -> hrac je na zemi */
+    private bool grounded_last; /** Predchozi stav "grounded" */
 
     private void Start()
     {
@@ -60,7 +62,8 @@ public class PlayerController : MonoBehaviour
 
         // init
         targetRotation = transform.rotation;
-        readyToJump = true;
+        inJump = false;
+        jumpBounce = false;
         inAttack = false;
         grounded_last = false;
 
@@ -71,6 +74,7 @@ public class PlayerController : MonoBehaviour
     {
         // ground check
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
+        
 
         /**************************************************************************************************/
         // OVLADANI
@@ -78,7 +82,7 @@ public class PlayerController : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
         // ovladani skoku
-        if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        if(Input.GetKey(jumpKey) && !inJump && grounded)
         {
             Jump();
         }
@@ -139,12 +143,18 @@ public class PlayerController : MonoBehaviour
         }
 
         // pokud je ve vzduchu -> neni mozne ovladat pohyb letu ve vzduchu
-        if(!grounded) {
-            // pohyb ve vzduchu (smer v okamziku vyskoku)
-            if(direction != null) {
-                rb.AddForce(direction.normalized * moveForce * airMultiplier * 10f, ForceMode.Force);
+        if(jumpDir != Vector3.zero) {
+            if(!grounded && inJump) {
+                // pohyb ve vzduchu (smer kterym se hrac diva)
+                if(jumpBounce) {
+                    // zpetny odraz od prekazky
+                    rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f, ForceMode.Force);  
+                } else {
+                    // sila pohybu ve vzduchu vpred
+                    rb.AddForce(jumpDir * moveForce * airMultiplier * 10f, ForceMode.Force);
+                }
+                return;
             }
-            return;
         }
 
         // vypocita smer pohybu
@@ -169,9 +179,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // doslo ke kolizi z jim objektem -> pokud je hrac ve vzduchu vynujele jeho vektro pohybu
-        if(!grounded) {
-            direction = new Vector3(0, 0, 0);
+        // doslo ke kolizi z jim objektem -> pokud je hrac ve vzduchu obrati jeho vektor pohybu
+        if(inJump) {
+            jumpBounce = true;
+        }
+        // pokud koliduje se zemi "inJump" = false -> muze skakat znovu
+        if(Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround)) {
+            inJump = false;
         }
     }
 
@@ -179,15 +193,17 @@ public class PlayerController : MonoBehaviour
     {
         // animator (jumping)
         animator.SetBool("isJumping", true);
-        readyToJump = false;
+        // propt set
+        inJump = true;
+        jumpBounce = false;
+        // impulse + reset
+        if(verticalInput != 0.0 || horizontalInput != 0.0) {
+            jumpDir = transform.forward;    
+        } else {
+            jumpDir = Vector3.zero;
+        }
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-        Invoke(nameof(ResetJump), jumpCooldown);
-    }
-
-    private void ResetJump()
-    {
-        readyToJump = true;
     }
 
     private void Attack() {
