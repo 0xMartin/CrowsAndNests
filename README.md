@@ -33,8 +33,8 @@
 - [ ] Efekty sceny
   - [ ] Pridani mlhy
   - [ ] Particly v prostredi
-  - [ ] Nocni stena
-  - [ ] Vyladeni osvetleni
+  - [ ] Nocni scena
+  - [ ] Prizpusobyt osvetleni
   - [ ] Skybox (noc/vesmir/...)
 - [ ] Postprocessing
   - [ ] Vyladeni barev obrazu
