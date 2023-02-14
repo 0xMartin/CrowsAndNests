@@ -9,6 +9,9 @@ public class BreakableEgg : MonoBehaviour
     public float maxForce;
     public float radius;
     public Transform playerTransform;
+
+    [Header("References")]
+    public ParticleSystem dustParticle;
  
     private bool isBroken;
 
@@ -34,14 +37,24 @@ public class BreakableEgg : MonoBehaviour
 
             // kontrola vzdalenosti + kontrola uhlu 
             if(distance < 3.5 && angle < 35f) {
-                Invoke(nameof(breaEgg), 0.3f);
+                Invoke(nameof(breaEgg1), 0.15f);
             }
         }
     }
     
-    private void breaEgg()
+    private void breaEgg1()
     {
         isBroken = true;
+
+        //dust fx
+        if(dustParticle != null) {
+            dustParticle.Play();
+        }
+
+        Invoke(nameof(breakEgg2), 0.1f);
+    }
+
+    private void breakEgg2() {
         // aktivuje gravitaci pro casti vejce a odhodi je do okoli
         foreach(Transform t in transform) {
             Rigidbody rg = t.GetComponent<Rigidbody>();

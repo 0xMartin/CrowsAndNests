@@ -149,7 +149,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.4
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -256,7 +256,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.4627451, g: 0.3764706, b: 0.28235295, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -318,8 +318,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.8
-      minScalar: 2
+      scalar: 0.6
+      minScalar: 1.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -371,8 +371,8 @@ ParticleSystem:
     startSizeY:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.8
-      minScalar: 2
+      scalar: 0.6
+      minScalar: 1.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -424,8 +424,8 @@ ParticleSystem:
     startSizeZ:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.8
-      minScalar: 2
+      scalar: 0.6
+      minScalar: 1.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -634,7 +634,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 1500
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 1
     rotation3D: 0
@@ -695,7 +695,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 70
+    angle: 40
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -4819,7 +4819,7 @@ ParticleSystemRenderer:
   m_MeshDistribution: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 3
+  m_MaxParticleSize: 1
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
@@ -5010,6 +5010,7 @@ MonoBehaviour:
   maxForce: 120
   radius: 10
   playerTransform: {fileID: 0}
+  dustParticle: {fileID: 0}
 --- !u!1 &4480789948737839974 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1128433411934642431, guid: 38584a17a6a48cb4994dbd082e1e9329, type: 3}
