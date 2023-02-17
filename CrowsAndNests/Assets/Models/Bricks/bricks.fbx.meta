@@ -9,6 +9,12 @@ ModelImporter:
   - first:
       74: 159572596962077815
     second: BrickRotationInverse
+  - first:
+      74: 8155696084056427705
+    second: bricks|bricksAction
+  - first:
+      74: -8426645655839483998
+    second: bricks|bricksAction.002
   externalObjects: {}
   materials:
     materialImportMode: 2

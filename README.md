@@ -11,7 +11,11 @@
 
 ## Preview of current version
 
-<img src="./Doc/5.png">
+<img src="./Doc/preview.png">
+
+## Game structure
+
+<img src="./Doc/main_structure.png">
 
 ## TODO - cesta k uspesnemu produktu
 - [X] Herni postava
