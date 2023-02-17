@@ -22,7 +22,19 @@
 - [ ] Design
   - [ ] Vytvorit ikonu hry
   - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
+- [ ] Menu
+  - [ ] 3D scena v pozadi menu
+  - [ ] Styl tlacitek a textu
+  - [ ] Settings menu
+  - [X] Main menu
+  - [ ] Game settings menu
+  - [ ] Game lobby menu
+  - [ ] Connect to host menu
 - [ ] Zvukove efekty
+  - [ ] Menu
+    - [ ] Zvuk stiknuti tlacika
+    - [ ] Zvuk pripojeni do lobby hry
+    - [ ] Zvuk spusteni hry
   - [ ] Vrana
     - [ ] Chuze
     - [ ] Vyskok
@@ -39,19 +51,19 @@
     - [ ] Odpocet "tick hodin"
   - [ ] Soundtrack
     - [ ] Menu
-    - [ ] Arena - soundtrack1 
+    - [X] Arena - soundtrack1 
       - ? https://www.youtube.com/watch?v=FNZMAlO_gi4&list=PLlHY6e7WCV6NaJ5iNMoAWSEasT83GOaDo&index=5&ab_channel=GamesMusic
     - [ ] Arena - soundtrack2
       - ? https://www.youtube.com/watch?v=OA5oLdbvoLc&ab_channel=IsaacMoring
     - [ ] Arena - soundtrack3
 - [ ] Efekty sceny
-  - [ ] Pridani mlhy
+  - [X] Pridani mlhy
   - [ ] Particly v prostredi
-  - [ ] Nocni scena
+  - [X] Nocni scena
   - [ ] Prizpusobyt osvetleni
-  - [ ] Skybox (noc/vesmir/...)
-- [ ] Postprocessing
-  - [ ] Vyladeni barev obrazu
+  - [X] Skybox (noc/vesmir/...)
+- [X] Postprocessing
+  - [X] Vyladeni barev obrazu
 - [ ] Skript pro rizeni areny
   - [ ] Zakladni struktura
   - [ ] Vstupy skriptu
@@ -67,3 +79,11 @@
   - [ ] Synchronizace dat
   - [ ] Komponanta pro prenos dat
   - [ ] Automatizovany vyhledavac serveru v lokalni siti
+  
+### Dodatecne vylepseni: 
+* zlepsit vzhled modelu
+* vytvorit vlastni soundtrack
+* vytvorit vlastno font pisma pro hru
+* vytvorit trailer video ke hre
+* publikace na steam
+* moznost hrani na verejnem serveru
