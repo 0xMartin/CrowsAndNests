@@ -86,3 +86,4 @@
 * vytvorit vlastno font pisma pro hru
 * vytvorit trailer video ke hre
 * publikace na steam
+* moznost hrani na verejnem serveru
