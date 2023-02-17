@@ -22,7 +22,19 @@
 - [ ] Design
   - [ ] Vytvorit ikonu hry
   - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
+- [ ] Menu
+  - [ ] 3D scena v pozadi menu
+  - [ ] Styl tlacitek a textu
+  - [ ] Settings menu
+  - [X] Main menu
+  - [ ] Game settings menu
+  - [ ] Game lobby menu
+  - [ ] Connect to host menu
 - [ ] Zvukove efekty
+  - [ ] Menu
+    - [ ] Zvuk stiknuti tlacika
+    - [ ] Zvuk pripojeni do lobby hry
+    - [ ] Zvuk spusteni hry
   - [ ] Vrana
     - [ ] Chuze
     - [ ] Vyskok
