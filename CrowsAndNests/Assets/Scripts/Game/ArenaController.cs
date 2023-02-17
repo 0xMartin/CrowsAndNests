@@ -54,6 +54,9 @@ public class ArenaController : MonoBehaviour
     public Transform spawn2;
     public Transform spawn3;
 
+    [Header("Spectator")]
+    public Transform spectator;
+
     /*********************************************************************************************************/
     // LOKALNI PROMENNE
     private MiniGameUtils.MiniGameContext gameCntx; /** Kontext mini hry */
@@ -75,7 +78,7 @@ public class ArenaController : MonoBehaviour
             spawn0, spawn1, spawn2, spawn3
         };
         // vytvoreni kontextu
-        this.gameCntx = new MiniGameContext(nests, spawns);
+        this.gameCntx = new MiniGameContext(nests, spawns, spectator);
 
         // vytvoreni mini her
         this.minigames = new List<MiniGame>();

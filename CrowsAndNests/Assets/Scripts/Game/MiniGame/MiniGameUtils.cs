@@ -42,14 +42,17 @@ namespace MiniGameUtils
         public Transform[] Spawns { get; private set; }
         // list z hraci
         public List<Player> Players { get; set; }
+        // pozice pro spektatora
+        public Transform SpectatorPos { get; set; }
 
         // list obsahuje indexy jiz pouzitych spawnu  
         private List<int> usedSpawns;
 
-        public MiniGameContext(GameObject[] nests, Transform[] spawns)
+        public MiniGameContext(GameObject[] nests, Transform[] spawns, Transform spectatorPos)
         {
             this.Nests = nests;
             this.Spawns = spawns;
+            this.SpectatorPos = SpectatorPos;
             this.Players = new List<Player>();
             this.usedSpawns = new List<int>();
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Context created. Nest count: " +
@@ -61,7 +64,7 @@ namespace MiniGameUtils
             if (player.ModelRef == null || usedSpawns.Count >= Spawns.Length)
             {
                 // selhalo
-                setPlayerCameraToObject(player, null); //>>>>>>>>>>>>>>>>>>>>>>>>>>> null -> spectator
+                setPlayerCameraFollowPoint(player, this.SpectatorPos, true);
                 return;
             }
 
@@ -75,7 +78,7 @@ namespace MiniGameUtils
                 if (cnt <= 0)
                 {
                     // selhalo
-                    setPlayerCameraToObject(player, null); //>>>>>>>>>>>>>>>>>>>>>>>>>>> null -> spectator
+                    setPlayerCameraFollowPoint(player, this.SpectatorPos, true);
                     return;
                 }
             } while (usedSpawns.Contains(rnd));
@@ -89,7 +92,7 @@ namespace MiniGameUtils
             player.ModelRef.SetActive(true);
 
             // nastavi kameru hrace na sledovani jeho modelu
-            setPlayerCameraToObject(player, player.ModelRef);
+            setPlayerCameraFollowPoint(player, player.ModelRef.transform, false);
 
             // log
             Vector3 pos = Spawns[rnd].transform.position;
@@ -112,7 +115,7 @@ namespace MiniGameUtils
             }
 
             // po uplinuti kratekho casu mu nastavy pohled na spectator kameru
-            setPlayerCameraToObject(player, null); //>>>>>>>>>>>>>>>>>>>>>>>>>>> null -> spectator
+            setPlayerCameraFollowPoint(player, this.SpectatorPos, true);
 
             // log
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] killed"));
@@ -129,7 +132,8 @@ namespace MiniGameUtils
 
         public void hideNest(int id)
         {
-            if(id < 0 || id >= Nests.Length) {
+            if (id < 0 || id >= Nests.Length)
+            {
                 return;
             }
 
@@ -146,7 +150,8 @@ namespace MiniGameUtils
 
         public void showNest(int id)
         {
-            if(id < 0 || id >= Nests.Length) {
+            if (id < 0 || id >= Nests.Length)
+            {
                 return;
             }
 
@@ -185,15 +190,55 @@ namespace MiniGameUtils
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Arene reset done"));
         }
 
-        public void setPlayerCameraToObject(Player player, GameObject obj)
+        public void setPlayerCameraFollowPoint(Player player, Transform position, bool spectator)
         {
             if (player.cinemachineFreeLook == null)
             {
                 Debug.LogError(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Failed to set player camer look on objects. Camera is null."));
                 return;
             }
-            // nastavi pohled kamery hrace na zvoleny objekt
-            //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+            // nastavi pohled kamery hrace na zvoleny objekt a zaroven ho bude kamera nasledovat
+            player.cinemachineFreeLook.LookAt = position;
+            player.cinemachineFreeLook.Follow = position;
+            // konfigurace cinemachine
+            if (spectator)
+            {
+                player.cinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
+                player.cinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
+                {
+                    m_Height = 1 * 3,
+                    m_Radius = 8 * 3
+                };
+                player.cinemachineFreeLook.m_Orbits[1] = new CinemachineFreeLook.Orbit
+                {
+                    m_Height = 8 * 3,
+                    m_Radius = 12 * 3
+                };
+                player.cinemachineFreeLook.m_Orbits[2] = new CinemachineFreeLook.Orbit
+                {
+                    m_Height = 17 * 3,
+                    m_Radius = 4 * 3
+                };
+            }
+            else
+            {
+                player.cinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
+                player.cinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
+                {
+                    m_Height = 1,
+                    m_Radius = 8
+                };
+                player.cinemachineFreeLook.m_Orbits[1] = new CinemachineFreeLook.Orbit
+                {
+                    m_Height = 8,
+                    m_Radius = 12
+                };
+                player.cinemachineFreeLook.m_Orbits[2] = new CinemachineFreeLook.Orbit
+                {
+                    m_Height = 17,
+                    m_Radius = 4
+                };
+            }
         }
     }
 
