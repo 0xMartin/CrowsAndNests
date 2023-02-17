@@ -79,4 +79,10 @@
   - [ ] Synchronizace dat
   - [ ] Komponanta pro prenos dat
   - [ ] Automatizovany vyhledavac serveru v lokalni siti
-Dodatecne vylepseni: zlepsit vzhled modelu, vytvorit vlastni soundtrack, vytvorit vlastno font pisma pro hru, vytvorit trailer video ke hre, publikace na steam
+  
+### Dodatecne vylepseni: 
+* zlepsit vzhled modelu
+* vytvorit vlastni soundtrack
+* vytvorit vlastno font pisma pro hru
+* vytvorit trailer video ke hre
+* publikace na steam
