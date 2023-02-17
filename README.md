@@ -39,19 +39,19 @@
     - [ ] Odpocet "tick hodin"
   - [ ] Soundtrack
     - [ ] Menu
-    - [ ] Arena - soundtrack1 
+    - [X] Arena - soundtrack1 
       - ? https://www.youtube.com/watch?v=FNZMAlO_gi4&list=PLlHY6e7WCV6NaJ5iNMoAWSEasT83GOaDo&index=5&ab_channel=GamesMusic
     - [ ] Arena - soundtrack2
       - ? https://www.youtube.com/watch?v=OA5oLdbvoLc&ab_channel=IsaacMoring
     - [ ] Arena - soundtrack3
 - [ ] Efekty sceny
-  - [ ] Pridani mlhy
+  - [X] Pridani mlhy
   - [ ] Particly v prostredi
-  - [ ] Nocni scena
+  - [X] Nocni scena
   - [ ] Prizpusobyt osvetleni
-  - [ ] Skybox (noc/vesmir/...)
-- [ ] Postprocessing
-  - [ ] Vyladeni barev obrazu
+  - [X] Skybox (noc/vesmir/...)
+- [X] Postprocessing
+  - [X] Vyladeni barev obrazu
 - [ ] Skript pro rizeni areny
   - [ ] Zakladni struktura
   - [ ] Vstupy skriptu
