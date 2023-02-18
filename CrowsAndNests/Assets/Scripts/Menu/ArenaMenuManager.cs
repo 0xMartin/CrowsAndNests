@@ -5,7 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using GameGlobal;
 
-
+/// <summary>
+/// Manager pro menu areny
+/// </summary>
 public class ArenaMenuManager : MonoBehaviour
 {
     public Button buttonBack, buttonCreate;

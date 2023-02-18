@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using MiniGameUtils;
 
+/// <summary>
+/// Controller areny. Jde o hlavni komponentu hry (veskere rozhodovani).
+/// </summary>
 public class ArenaController : MonoBehaviour
 {
 
     /*********************************************************************************************************/
     // VEREJNE PROMENNE [CONFIG]
-    public int GAME_START_TIME = 30;    /** Za jak dlouho se spusti hra (v sekundach)  */
-    public int MATCH_WAIT_TIME = 10;    /** Za jak dlouho zacne dalsi minihra po skonceni posledni minihry (v sekundach) */
-    public int GAME_END_TIME = 10;      /** Jak dloho ma hra cekat jeste po jejim ukonceni (v sekundach)  */
-    public int MAX_PLAYERS = 4;         /** Maximalni pocet hracu (1 - 4 & min <= max) */
-    public int MIN_PLAYERS = 1;         /** Minimalni pocet hracu pro hru (1 - 4 & min <= max) [pro single player=1, pro multiplayer=2, jine konfigurace jsou taktez mozne] */
+    public int GAME_START_TIME = 30;        /** Za jak dlouho se spusti hra (v sekundach)  */
+    public int GAME_END_TIME = 10;          /** Jak dloho ma hra cekat jeste po jejim ukonceni (v sekundach)  */
+    public int MINIGAME_START_TIME = 10;    /** Za jak dlouho zacne dalsi minihra po zkonceni posledni minihry (v sekundach) */
+    public int MINIGAME_END_TIME = 5;       /** Jak dlouho bude minihrace cekat po jejim konci (v sekundach) */
+    public int MAX_PLAYERS = 4;             /** Maximalni pocet hracu (1 - 4 & min <= max) */
+    public int MIN_PLAYERS = 1;             /** Minimalni pocet hracu pro hru (1 - 4 & min <= max) [pro single player=1, pro multiplayer=2, jine konfigurace jsou taktez mozne] */
 
     /*********************************************************************************************************/
     // VEREJNE PROMENNE [REFERENCES]
@@ -85,6 +89,8 @@ public class ArenaController : MonoBehaviour
     };
     private GameState state;
 
+    private float startTime; /** promenna pro uchovavani casu */
+
     void Start()
     {
         // defaultni stav hry
@@ -120,6 +126,8 @@ public class ArenaController : MonoBehaviour
     {
         if (this.gameCntx == null) return;
 
+        float remaining;
+
         // stavovy automat (hlavni herni rozhodovaci smycka)
         switch (this.state)
         {
@@ -129,12 +137,22 @@ public class ArenaController : MonoBehaviour
                 {
                     this.state = GameState.Game_Starting;
                 }
+
+                // zaznamenani startovniho casu pro odpocet startu cele hry
+                startTime = GameGlobal.Util.time_start();
                 break;
 
 
             case GameState.Game_Starting:
                 // odpocet do spusteni hry
-                //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+                remaining = GameGlobal.Util.time_remaining(startTime, GAME_START_TIME);
+                showCountDown((int) remaining, true);
+
+                // cas uplynul
+                if(GameGlobal.Util.time_passed(startTime, GAME_START_TIME)) {
+                    showCountDown(0, false);
+                    this.state = GameState.MiniGame_Selecting;   
+                }
                 break;
 
 
@@ -152,16 +170,21 @@ public class ArenaController : MonoBehaviour
 
                 // hned prejde do stavu "MiniGame_Starting"
                 this.state = GameState.MiniGame_Starting;
+
+                // zaznamenani startovniho casu pro odpocet mini hry
+                startTime = GameGlobal.Util.time_start();
                 break;
 
 
             case GameState.MiniGame_Starting:
-                // zobrazeni odpoctu do zacatku hry
-                //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+                // zobrazeni odpoctu do zacatku minihry
+                remaining = GameGlobal.Util.time_remaining(startTime, MINIGAME_START_TIME);
+                showCountDown((int) remaining, true);
 
                 // pokud je odpocet u konce prejde do stavu "MiniGame_Running"
-                if (true/*??*/)
+                if (GameGlobal.Util.time_passed(startTime, MINIGAME_START_TIME))
                 {
+                    showCountDown(0, false);
                     this.state = GameState.MiniGame_Running;
                 }
                 break;
@@ -175,34 +198,33 @@ public class ArenaController : MonoBehaviour
                 if (this.activeMinigame.IsGameOver())
                 {
                     this.state = GameState.MiniGame_Ending;
+                    // zaznamenani startovniho casu pro odmereni minigame end timu
+                    startTime = GameGlobal.Util.time_start();
                 }
                 break;
 
 
             case GameState.MiniGame_Ending:
                 // pocka definovany cas a zobrazi viteze minihry
-                //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
-
-                // spocita pocet zijicich hracu
-                if (this.gameCntx.countLivingPlayers() >= MIN_PLAYERS)
-                {
-                    // pokud je dostatek hracu smycky se opakuje a jde znovu vybrat dalsi minihru
-                    if (true/*??*/)
+                if(GameGlobal.Util.time_passed(startTime, MINIGAME_END_TIME)) {
+                    // spocita pocet zijicich hracu
+                    if (this.gameCntx.countLivingPlayers() >= MIN_PLAYERS)
                     {
+                        // pokud je dostatek hracu smycky se opakuje a jde znovu vybrat dalsi minihru
                         this.state = GameState.MiniGame_Selecting;
                     }
-                }
-                else
-                {
-                    // pokud uz neni dostatek hracu je hra ukoncena
-                    this.gameCntx.endGame();
+                    else
+                    {
+                        // pokud uz neni dostatek hracu je hra ukoncena
+                        this.gameCntx.endGame();
+                    }
                 }
                 break;
 
 
             case GameState.Game_Ending:
                 // odpocet do ukonceni areny
-                if(false/*??*/) {
+                if(GameGlobal.Util.time_passed(startTime, GAME_END_TIME)) {
                     // odstrani kontext
                     this.gameCntx = null;
                     // prechod do sceny a zobrazeni vitezu celkove hry
@@ -214,6 +236,8 @@ public class ArenaController : MonoBehaviour
         // dodatecne prechodove pravidla
         if(this.gameCntx.IsGameEnd) {
             this.state = GameState.Game_Ending;   
+            // zaznamenani startovniho casu pro odmereni game end timu
+            startTime = GameGlobal.Util.time_start();
         }
     }
 

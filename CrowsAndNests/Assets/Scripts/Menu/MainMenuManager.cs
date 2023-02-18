@@ -5,6 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using GameGlobal;
 
+/// <summary>
+/// Manager pro hlavni menu hry
+/// </summary>
 public class MainMenuManager : MonoBehaviour
 {
     public Button buttonSingle, buttonMulti, buttonSettings, buttonExit;

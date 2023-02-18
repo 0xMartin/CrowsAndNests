@@ -2,18 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Zajistuje rozbiti vejce. Je mozne pouzit pro libovolny typ objetu, jehoz model se sklad z vice mensich casti.
+/// </summary>
 public class BreakableEgg : MonoBehaviour
 {
 
-    public float minForce;
-    public float maxForce;
-    public float radius;
-    public Transform playerTransform;
+    public float minForce; /** minimalni sila */
+    public float maxForce; /** maxilani sila */
+    public float radius; /** radius posobeni sily rozbity vejce */
 
     [Header("References")]
-    public ParticleSystem dustParticle;
+    public Transform playerTransform; /** pozice hrace */
+    public ParticleSystem dustParticle; /** efekt rozbiti vejce */
  
-    private bool isBroken;
+    private bool isBroken; /** stav zda je vejce uz rozbite*/
 
     private void Start() {
         isBroken = false;
@@ -42,6 +45,9 @@ public class BreakableEgg : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Prvni faze rozbiti vejce. Jen aktivuje efekt a po chvili vyvola jeho roztristeni na skorapky.
+    /// </summary>
     private void breaEgg1()
     {
         isBroken = true;
@@ -54,6 +60,10 @@ public class BreakableEgg : MonoBehaviour
         Invoke(nameof(breakEgg2), 0.1f);
     }
 
+    /// <summary>
+    /// Druha vaze rozbiti vejce. Roztristeni na mensi casti. Model vejce je jiz setaven z nekolika 
+    /// mensich casti, kterym se jen aktivuje fyzika a aplikuje se na ne sila exploze.
+    /// </summary>
     private void breakEgg2() {
         // aktivuje gravitaci pro casti vejce a odhodi je do okoli
         foreach(Transform t in transform) {
@@ -64,6 +74,10 @@ public class BreakableEgg : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Je vejce rozbite?
+    /// </summary>
+    /// <returns>True -> vejce je rozbite</returns>
     public bool isEggBroken() {
         return this.isBroken;
     }

@@ -2,28 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Trida zajistujici ovladani hrace a vypocet jeho pohybu a chovani.
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
 
     /********************************************************************/
     // nastaveni pohybu (defaultni hodnoty pro mass = 10.0)
     [Header("Movement")]
-    public float moveForce = 100.0f;
-    public float maxMoveSpeed = 6.0f;
-    public float groundDrag = 0.5f;
-    public float jumpForce = 190.0f;
-    public float airMultiplier = 7.0f;
-    public float rotationSpeed = 3.0f;
-    public float gravity = 40.0f;
+    public float moveForce = 100.0f; /** sila pohybu */
+    public float maxMoveSpeed = 6.0f; /** maximalni rychlost pohybu */
+    public float groundDrag = 0.5f; /** faktor treni povrschu zeme */
+    public float jumpForce = 190.0f; /** sila vyskoku */
+    public float airMultiplier = 7.0f; /** faktor nasobeni sily, kdyz je hrac ve vzduchu */
+    public float rotationSpeed = 3.0f; /** rychlost rotace hrace */
+    public float gravity = 40.0f; /** dodatecna gravitacni sila posobici na hrace (pro vyladeni rychlosti padani) */
 
     /********************************************************************/
     // nastaveni ovladani
     [Header("Keybinds")]
-    public KeyCode jumpKey = KeyCode.Space;
-    public int mouseButtonAttack;
+    public KeyCode jumpKey = KeyCode.Space; /** klavesa pro skok */
+    public int mouseButtonAttack; /** tlacitko pro utok */
+
+    // pro kontrolu kolize se zemi
     [Header("Ground Check")]
-    public float playerHeight;
-    public LayerMask whatIsGround;
+    public float playerHeight; /** vyska hrace */
+    public LayerMask whatIsGround; /** vrstva ktera brana jako zeme */
 
     /********************************************************************/
     // reference na externi objekty
@@ -50,6 +55,9 @@ public class PlayerController : MonoBehaviour
     private bool grounded; /** True -> hrac je na zemi */
     private bool grounded_last; /** Predchozi stav "grounded" */
 
+    /// <summary>
+    /// Inicializace promennych
+    /// </summary>
     private void Start()
     {
         // skryje a uzamkne kurzor
@@ -70,11 +78,13 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    /// <summary>
+    /// Update metoda. Vyhodnoceni ovladani hrace.
+    /// </summary>
     private void Update()
     {
         // ground check
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
-        
 
         /**************************************************************************************************/
         // OVLADANI
@@ -132,6 +142,9 @@ public class PlayerController : MonoBehaviour
         grounded_last = grounded;
     }
 
+    /// <summary>
+    /// Pro konstatni vypocet fyziky hrace
+    /// </summary>
     private void FixedUpdate()
     {
         // gravitace
@@ -177,6 +190,10 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(direction.normalized * moveForce * 10f, ForceMode.Force);
     }
 
+    /// <summary>
+    /// Detekce kolizi. Urceno pro detekce kolizi se zemi.
+    /// </summary>
+    /// <param name="collision">Collision</param>
     private void OnCollisionEnter(Collision collision)
     {
         // doslo ke kolizi z jim objektem -> pokud je hrac ve vzduchu obrati jeho vektor pohybu
@@ -189,6 +206,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Funkce pro vyskok hrace.
+    /// </summary>
     private void Jump()
     {
         // animator (jumping)
@@ -206,6 +226,9 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
+    /// <summary>
+    /// Funkce pro utok hrace.
+    /// </summary>
     private void Attack() {
         // animator utok
         animator.SetBool("isAttacking", true); 
