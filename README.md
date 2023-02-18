@@ -18,7 +18,13 @@
 <img src="./Doc/main_structure.png">
 
 ## TODO - cesta k uspesnemu produktu
-- [X] Herni postava
+- [ ] Herni postava
+  - [X] Pohybove animace
+  - [ ] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
+  - [ ] Vytvorit skiny
+- [ ] Kamera
+  - [ ] Limity pohybu v ose Y (kamera se nesmi dostat pod mapu pokud hrac pada dolu)
+  - [ ] Treseni kamery pri ruznych efektech
 - [ ] Design
   - [ ] Vytvorit ikonu hry
   - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
@@ -65,14 +71,19 @@
 - [X] Postprocessing
   - [X] Vyladeni barev obrazu
 - [ ] Skript pro rizeni areny
-  - [ ] Zakladni struktura
-  - [ ] Vstupy skriptu
+  - [X] Zakladni struktura
+  - [X] Vstupy skriptu
   - [ ] Hlavni herni smycka
-  - [ ] Respawn handler
-  - [ ] Spawn handler
+  - [X] Respawn handler
+  - [X] Spawn handler
   - [ ] Manazer hernich modu
   - [ ] Manazer skore
-  - [ ] Cleaning manager
+  - [X] Cleaning manager
+- [ ] Mini Hry
+  - [ ] Fall guy Perfect match
+  - [ ] Bitva o vejce
+  - [ ] Padajici predmety
+  - [ ] ?? napady na dalsi hry
 - [ ] Multiplayer LAN
   - [ ] Lokalni server
   - [ ] Klient
