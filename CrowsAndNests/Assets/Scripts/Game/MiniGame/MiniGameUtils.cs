@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using System;
 
 namespace MiniGameUtils
 {
@@ -13,8 +14,8 @@ namespace MiniGameUtils
         public void initGame(MiniGameContext cntx);
         public void updateGame();
         public void runGame();
-        public void stopGame();
         public void endGame();
+        public bool IsGameOver();
     }
 
     // struktura uchovavajici potrebne data o hraci
@@ -23,7 +24,7 @@ namespace MiniGameUtils
         public string Name { get; set; } /** jmeno hrace */
         // skore hrace
         public int Score { get; set; }
-        // pocet zivotu hrace
+        // pocet zivotu hrace (i hrac ktery ma 0 zivotu muze hrat v dalsi hre, pokud ma vsak zaporny pocet zivotu je jiz ze hry vyrazen)
         public int Lives { get; set; }
         // pokud je "true" hrac je zivi, pokud "false" uz zemrel v dane minihre a jeho pohled kamery je nastaven na spectator mod
         public bool IsLiving { get; set; }
@@ -33,6 +34,21 @@ namespace MiniGameUtils
         public CinemachineFreeLook cinemachineFreeLook { get; set; }
     }
 
+    // statistiky hry (celkove => vsechny odehrane minihry)
+    public struct GameStats
+    {
+        public string GameName { get; set; }
+        public int GameCount { get; set; }
+        public DateTime GameStart { get; private set; }
+
+        public GameStats(string gameName)
+        {
+            this.GameName = gameName;
+            this.GameCount = 0;
+            this.GameStart = DateTime.Now;
+        }
+    };
+
     // Kontext mini hry, obsahuje vsechny data potrebne pro chod minihry v arene
     public class MiniGameContext
     {
@@ -40,19 +56,34 @@ namespace MiniGameUtils
         public GameObject[] Nests { get; private set; }
         // pole vsech spawnu areny
         public Transform[] Spawns { get; private set; }
-        // list z hraci
-        public List<Player> Players { get; set; }
-        // pozice pro spektatora
-        public Transform SpectatorPos { get; set; }
-
         // list obsahuje indexy jiz pouzitych spawnu  
         private List<int> usedSpawns;
+        // pozice pro spektatora
+        public Transform SpectatorPos { get; private set; }
 
-        public MiniGameContext(GameObject[] nests, Transform[] spawns, Transform spectatorPos)
+        // delegat pro pozadavek na vytvoreni efekty (pozadavky zpracovava hlavni ridici skript areny)
+        public delegate void FxCreateRequest(string type, Vector3 pos, Quaternion rot);
+        public FxCreateRequest FxCallback { get; private set; }
+
+        // list z hraci
+        public List<Player> Players { get; set; }
+
+        // statistiky hry
+        public GameStats GameStats { get; set; }
+
+        // status o tom zda je hra spustna
+        public bool IsGameRunning {get; private set;}
+        // status o tom zda je hra u konce
+        public bool IsGameEnd {get; private set;}
+
+        public MiniGameContext(GameObject[] nests, Transform[] spawns, Transform spectatorPos, FxCreateRequest fxCallback)
         {
             this.Nests = nests;
             this.Spawns = spawns;
             this.SpectatorPos = SpectatorPos;
+            this.FxCallback = fxCallback;
+            this.IsGameRunning = false;
+            this.IsGameEnd = false;
             this.Players = new List<Player>();
             this.usedSpawns = new List<int>();
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Context created. Nest count: " +
@@ -61,6 +92,12 @@ namespace MiniGameUtils
 
         public void randomSpawnPlayer(Player player)
         {
+            // pokud hrac jiz nema zivoty
+            if (player.Lives < 0)
+            {
+                return;
+            }
+            // pokud z nejakeho duvodu hrac nema model nebo jiz neni volny spawn
             if (player.ModelRef == null || usedSpawns.Count >= Spawns.Length)
             {
                 // selhalo
@@ -73,7 +110,7 @@ namespace MiniGameUtils
             int cnt = 50;
             do
             {
-                rnd = Random.Range(0, Spawns.Length);
+                rnd = UnityEngine.Random.Range(0, Spawns.Length);
                 cnt++;
                 if (cnt <= 0)
                 {
@@ -102,11 +139,12 @@ namespace MiniGameUtils
         public void killPlayer(Player player)
         {
             // snizi hraci pocet zivotu, pokud jiz nema zivoty konci ve hre a muze se jen divat
-            if (player.Lives == 0)
+            // hrace je bran jako vyrazeny ze hry pokud mam zaporny pocet zivotu
+            if (player.Lives < 0)
             {
                 return;
             }
-            player.Lives = Mathf.Max(0, player.Lives - 1);
+            player.Lives = Mathf.Max(-1, player.Lives - 1);
 
             // deaktivuje hraci jeho model ze hry
             if (player.ModelRef != null)
@@ -119,6 +157,15 @@ namespace MiniGameUtils
 
             // log
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] killed"));
+        }
+
+        public void killAllPlayers()
+        {
+            // zabije vsechny hrace
+            foreach (Player p in Players)
+            {
+                killPlayer(p);
+            }
         }
 
         public void addPlayerLives(Player player, int lives)
@@ -142,7 +189,10 @@ namespace MiniGameUtils
             nest.SetActive(false);
 
             // zobrazi efekt skryti hnizda
-            //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+            if (FxCallback != null)
+            {
+                FxCallback("hide_nest", nest.transform.position, nest.transform.rotation);
+            }
 
             // log
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Nest [" + id + "] is now deactivated"));
@@ -160,7 +210,10 @@ namespace MiniGameUtils
             nest.SetActive(true);
 
             // zobrazi efekt zobrazeni hnizda
-            //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+            if (FxCallback != null)
+            {
+                FxCallback("show_nest", nest.transform.position, nest.transform.rotation);
+            }
 
             // log
             Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Nest [" + id + "] is now active"));
@@ -240,6 +293,31 @@ namespace MiniGameUtils
                 };
             }
         }
+
+        public int countLivingPlayers() {
+            // spocita hrace, kteri jeste maji dostatek zivotu a mouzou pokracovat ve hre
+            // hraci kteri mohou hrat maji pocet zivotu >= 0
+            int cnt = 0;
+            foreach(Player p in this.Players) {
+                if(p.Lives >= 0) {
+                    cnt++;
+                }
+            }
+            return cnt;
+        }
+
+        public void endGame() {
+            // ukonci hru
+            this.IsGameRunning = false;
+            this.IsGameEnd = true;
+        }
+
+        public void startGame() {
+            // spusti hru
+            this.IsGameRunning = true;
+            this.IsGameEnd = false;
+        }
+
     }
 
 }

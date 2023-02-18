@@ -9,9 +9,10 @@ public class ArenaController : MonoBehaviour
     /*********************************************************************************************************/
     // VEREJNE PROMENNE [CONFIG]
     public int GAME_START_TIME = 30;    /** Za jak dlouho se spusti hra (v sekundach)  */
-    public int MATCH_WAIT_TIME = 5;     /** Za jak dlouho zacne dalsi minihra po skonceni posledni minihry (v sekundach) */
+    public int MATCH_WAIT_TIME = 10;    /** Za jak dlouho zacne dalsi minihra po skonceni posledni minihry (v sekundach) */
+    public int GAME_END_TIME = 10;      /** Jak dloho ma hra cekat jeste po jejim ukonceni (v sekundach)  */
     public int MAX_PLAYERS = 4;         /** Maximalni pocet hracu (1 - 4 & min <= max) */
-    public int MIN_PLAYERS = 1;         /** Minimalni pocet hracu (1 - 4 & min <= max) */
+    public int MIN_PLAYERS = 1;         /** Minimalni pocet hracu pro hru (1 - 4 & min <= max) [pro single player=1, pro multiplayer=2, jine konfigurace jsou taktez mozne] */
 
     /*********************************************************************************************************/
     // VEREJNE PROMENNE [REFERENCES]
@@ -57,6 +58,10 @@ public class ArenaController : MonoBehaviour
     [Header("Spectator")]
     public Transform spectator;
 
+    [Header("FX")]
+    public GameObject nestHideFxPrefab;
+    public GameObject nestShowFxPrefab;
+
     /*********************************************************************************************************/
     // LOKALNI PROMENNE
     private MiniGameUtils.MiniGameContext gameCntx; /** Kontext mini hry */
@@ -64,8 +69,31 @@ public class ArenaController : MonoBehaviour
     private List<MiniGame> minigames; /** Seznam dostupnych miniher */
     private MiniGame activeMinigame; /** Aktivni minihra */
 
+    // aktualni stav ve kterem se hra nachazi
+    private enum GameState
+    {
+        Not_Running, /** Hra jeste neni spustena/nakonfigurovana */
+        Game_Starting, /** Hra je jiz spustene. Bezi odpocet do spusteni hry*/
+
+        // tyto 4 faze se toci porad dokola dokud je dostatek hracu
+        MiniGame_Selecting, /** V teto fazi se vybira minihra ktera se bude hrat */
+        MiniGame_Starting, /** Minihra byla vybrana. Bezi odpocet nez se minihra spusti */
+        MiniGame_Running, /** Minihra bezi. V teto fazi hraci uz hraji/muzou umirat. */
+        MiniGame_Ending, /** Minihra skoncila, kratky cas pro rekapitulaci vitezu teto minihry a pricteni skore. */
+
+        Game_Ending /** Hra skoncila. Kratky cas a pak presmerovani do final lobby se zobrazenymi vysledky */
+    };
+    private GameState state;
+
     void Start()
     {
+        // defaultni stav hry
+        this.state = GameState.Not_Running;
+
+        // vytvoreni mini her
+        this.minigames = new List<MiniGame>();
+
+        // <KONTEXT MINI HERNI ARENY>
         // hnizda
         GameObject[] nests = new GameObject[]{
             nest1, nest2, nest3, nest4,
@@ -78,23 +106,163 @@ public class ArenaController : MonoBehaviour
             spawn0, spawn1, spawn2, spawn3
         };
         // vytvoreni kontextu
-        this.gameCntx = new MiniGameContext(nests, spawns, spectator);
+        this.gameCntx = new MiniGameContext(
+            nests,
+            spawns,
+            spectator,
+            new MiniGameContext.FxCreateRequest(fxCallback)
+        );
 
-        // vytvoreni mini her
-        this.minigames = new List<MiniGame>();
-
-        Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "Init done"));  
+        Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "Init done"));
     }
 
     void Update()
     {
+        if (this.gameCntx == null) return;
 
+        // stavovy automat (hlavni herni rozhodovaci smycka)
+        switch (this.state)
+        {
+            case GameState.Not_Running:
+                // pokud je hra spusta prejde do statvu "Game_Starting"
+                if (this.gameCntx.IsGameRunning)
+                {
+                    this.state = GameState.Game_Starting;
+                }
+                break;
+
+
+            case GameState.Game_Starting:
+                // odpocet do spusteni hry
+                //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+                break;
+
+
+            case GameState.MiniGame_Selecting:
+                // vyber dalsi mini hry
+                randomMiniGameSelect();
+                if (this.activeMinigame == null)
+                {
+                    Debug.LogError(GameGlobal.Util.buildMessage(typeof(ArenaController), "Failed select random minigame"));
+                    break;
+                }
+
+                // inicializace vybrane minihry
+                this.activeMinigame.initGame(this.gameCntx);
+
+                // hned prejde do stavu "MiniGame_Starting"
+                this.state = GameState.MiniGame_Starting;
+                break;
+
+
+            case GameState.MiniGame_Starting:
+                // zobrazeni odpoctu do zacatku hry
+                //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+
+                // pokud je odpocet u konce prejde do stavu "MiniGame_Running"
+                if (true/*??*/)
+                {
+                    this.state = GameState.MiniGame_Running;
+                }
+                break;
+
+
+            case GameState.MiniGame_Running:
+                // vykonavani smycky aktualne spustene minihry
+                this.activeMinigame.updateGame();
+
+                // pokud je minihra u konce prejde do stavu "MiniGame_Ending
+                if (this.activeMinigame.IsGameOver())
+                {
+                    this.state = GameState.MiniGame_Ending;
+                }
+                break;
+
+
+            case GameState.MiniGame_Ending:
+                // pocka definovany cas a zobrazi viteze minihry
+                //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+
+                // spocita pocet zijicich hracu
+                if (this.gameCntx.countLivingPlayers() >= MIN_PLAYERS)
+                {
+                    // pokud je dostatek hracu smycky se opakuje a jde znovu vybrat dalsi minihru
+                    if (true/*??*/)
+                    {
+                        this.state = GameState.MiniGame_Selecting;
+                    }
+                }
+                else
+                {
+                    // pokud uz neni dostatek hracu je hra ukoncena
+                    this.gameCntx.endGame();
+                }
+                break;
+
+
+            case GameState.Game_Ending:
+                // odpocet do ukonceni areny
+                if(false/*??*/) {
+                    // odstrani kontext
+                    this.gameCntx = null;
+                    // prechod do sceny a zobrazeni vitezu celkove hry
+                    //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+                }
+                break;
+        }
+
+        // dodatecne prechodove pravidla
+        if(this.gameCntx.IsGameEnd) {
+            this.state = GameState.Game_Ending;   
+        }
     }
 
-    private void randomMiniGameSelect() {
+    private void createGame(string gameName)
+    {
+        if (this.gameCntx == null)
+        {
+            Debug.LogError(GameGlobal.Util.buildMessage(typeof(ArenaController), "Failed to create game. Context is null!"));
+            return;
+        }
+        this.gameCntx.GameStats = new GameStats(gameName);
+    }
+
+    private void randomMiniGameSelect()
+    {
         int rng = Random.Range(0, minigames.Count);
-        activeMinigame = minigames[rng];  
-        Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "MiniGame set on: " + activeMinigame.getName()));  
+        activeMinigame = minigames[rng];
+        Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "MiniGame set on: " + activeMinigame.getName()));
+    }
+
+    private void showCountDown(int number, bool show) {
+        // zobrazeni cisla odpoctu
+        //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+    }
+
+    private void showMiniGameInfo(string info, bool show) {
+        // zobrazi info o mini hre (kratky popis jak ji hrat)
+        //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+    }
+
+    private void fxCallback(string type, Vector3 pos, Quaternion rot)
+    {
+        // na vyzadani kontextu nebo i jine komponenty ktery tento callback zavola 
+        // vytvori pozadovany efekt ktery je v teto funkce definovany
+        switch (type)
+        {
+            case "hide_nest":
+                if (nestHideFxPrefab != null)
+                {
+                    Instantiate(nestHideFxPrefab, pos, rot);
+                }
+                break;
+            case "show_nest":
+                if (nestShowFxPrefab != null)
+                {
+                    Instantiate(nestShowFxPrefab, pos, rot);
+                }
+                break;
+        }
     }
 
 }
