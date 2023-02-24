@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using MiniGameUtils;
 
 /// <summary>
@@ -66,6 +67,9 @@ public class ArenaController : MonoBehaviour
     public GameObject nestHideFxPrefab;
     public GameObject nestShowFxPrefab;
 
+    [Header("UI-Text")]
+    public GameObject countdownObj;
+
     /*********************************************************************************************************/
     // LOKALNI PROMENNE
     private MiniGameUtils.MiniGameContext gameCntx; /** Kontext mini hry */
@@ -91,8 +95,14 @@ public class ArenaController : MonoBehaviour
 
     private float startTime; /** promenna pro uchovavani casu */
 
+    private TextMeshProUGUI countdownText; /** Count down text */
+
     void Start()
     {
+        // init
+        this.countdownText = this.countdownObj.GetComponent<TextMeshProUGUI>();
+        this.countdownText.enabled = false;
+
         // defaultni stav hry
         this.state = GameState.Not_Running;
 
@@ -120,6 +130,9 @@ public class ArenaController : MonoBehaviour
         );
 
         Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "Init done"));
+
+        // automaticke spusteni (pak predelat => pokud pujde o multiplayer => spusti hru az se pripoji hraci)
+        this.gameCntx.startGame();
     }
 
     void Update()
@@ -136,6 +149,7 @@ public class ArenaController : MonoBehaviour
                 if (this.gameCntx.IsGameRunning)
                 {
                     this.state = GameState.Game_Starting;
+                    Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "GO TO Game_Starting"));
                 }
 
                 // zaznamenani startovniho casu pro odpocet startu cele hry
@@ -151,7 +165,8 @@ public class ArenaController : MonoBehaviour
                 // cas uplynul
                 if(GameGlobal.Util.time_passed(startTime, GAME_START_TIME)) {
                     showCountDown(0, false);
-                    this.state = GameState.MiniGame_Selecting;   
+                    this.state = GameState.MiniGame_Selecting; 
+                    Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "GO TO MiniGame_Selecting"));  
                 }
                 break;
 
@@ -170,6 +185,7 @@ public class ArenaController : MonoBehaviour
 
                 // hned prejde do stavu "MiniGame_Starting"
                 this.state = GameState.MiniGame_Starting;
+                Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "GO TO MiniGame_Starting"));
 
                 // zaznamenani startovniho casu pro odpocet mini hry
                 startTime = GameGlobal.Util.time_start();
@@ -186,6 +202,7 @@ public class ArenaController : MonoBehaviour
                 {
                     showCountDown(0, false);
                     this.state = GameState.MiniGame_Running;
+                    Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "GO TO MiniGame_Running"));
                 }
                 break;
 
@@ -198,6 +215,7 @@ public class ArenaController : MonoBehaviour
                 if (this.activeMinigame.IsGameOver())
                 {
                     this.state = GameState.MiniGame_Ending;
+                    Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "GO TO MiniGame_Ending"));
                     // zaznamenani startovniho casu pro odmereni minigame end timu
                     startTime = GameGlobal.Util.time_start();
                 }
@@ -212,6 +230,7 @@ public class ArenaController : MonoBehaviour
                     {
                         // pokud je dostatek hracu smycky se opakuje a jde znovu vybrat dalsi minihru
                         this.state = GameState.MiniGame_Selecting;
+                        Debug.Log(GameGlobal.Util.buildMessage(typeof(ArenaController), "GO TO MiniGame_Selecting"));
                     }
                     else
                     {
@@ -260,7 +279,17 @@ public class ArenaController : MonoBehaviour
 
     private void showCountDown(int number, bool show) {
         // zobrazeni cisla odpoctu
-        //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+        if(show) {
+            if(!this.countdownText.enabled) {
+                this.countdownText.enabled = true;
+            }
+        } else {
+            if(this.countdownText.enabled) {
+                this.countdownText.enabled = false;
+            }
+        }
+
+        this.countdownText.SetText(number.ToString());
     }
 
     private void showMiniGameInfo(string info, bool show) {
