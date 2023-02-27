@@ -11,7 +11,7 @@
 
 ## Preview of current version
 
-<img src="./Doc/preview.gif">
+<img src="./Doc/preview.gif" width="100%" >
 
 <img src="./Doc/preview.png">
 
