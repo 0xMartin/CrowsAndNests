@@ -11,6 +11,8 @@
 
 ## Preview of current version
 
+<img src="./Doc/preview.gif">
+
 <img src="./Doc/preview.png">
 
 ## Game structure
