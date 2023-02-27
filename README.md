@@ -13,6 +13,8 @@
 
 <img src="./Doc/preview.png">
 
+## Video
+
 <img src="./Doc/preview.gif" width="100%" alt="Video záznam ze hry">
 
 ## Game structure
