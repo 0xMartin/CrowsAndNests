@@ -11,9 +11,9 @@
 
 ## Preview of current version
 
-<img src="./Doc/preview.gif" width="100%" alt="Video záznam ze hry">
-
 <img src="./Doc/preview.png">
+
+<img src="./Doc/preview.gif" width="100%" alt="Video záznam ze hry">
 
 ## Game structure
 
