@@ -19,7 +19,7 @@
 
 <img src="./Doc/main_structure.png">
 
-## TODO - cesta k uspesnemu produktu
+## TODO
 - [ ] Herni postava
   - [X] Pohybove animace
   - [ ] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
