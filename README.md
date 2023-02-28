@@ -22,6 +22,10 @@
 <img src="./Doc/main_structure.png">
 
 ## TODO
+- [ ] Prostredi
+  - [ ] Vymodelovat lepe vypadajici vez z hodinama (aktualni verze: nic moc obarveni, nakvalitni tvary, malo komplexni, nejlepe pouziti textur ruznych materualu pro obarveni)
+  - [ ] Dalsi dekorativni material do prostredi, kolem areny je zatim relativne prazdno, bylo by dobre prostor nejaky vhodnym zpusoben zaplnit
+  - [ ] Animace pohypu palicek v ptacim hnizde
 - [ ] Herni postava
   - [X] Pohybove animace
   - [ ] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
