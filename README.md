@@ -100,9 +100,9 @@
   - [ ] Automatizovany vyhledavac serveru v lokalni siti
   
 ### Dodatecne vylepseni: 
-* zlepsit vzhled modelu
-* vytvorit vlastni soundtrack
-* vytvorit vlastno font pisma pro hru
-* vytvorit trailer video ke hre
-* publikace na steam
-* moznost hrani na verejnem serveru
+* zlepsit vzhled modelu 
+* vytvorit vlastni soundtrack (FL Studio)
+* vytvorit vlastno font pisma pro hru (Adobe Ilustrator)
+* vytvorit trailer video ke hre (Premiera + After Effects)
+* publikace na steam 
+* moznost hrani na verejnem serveru ()
