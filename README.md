@@ -81,10 +81,10 @@
 - [ ] Skript pro rizeni areny
   - [X] Zakladni struktura
   - [X] Vstupy skriptu
-  - [ ] Hlavni herni smycka
+  - [X] Hlavni herni smycka
   - [X] Respawn handler
   - [X] Spawn handler
-  - [ ] Manazer hernich modu
+  - [X] Manazer hernich modu
   - [ ] Manazer skore
   - [X] Cleaning manager
 - [ ] Mini Hry
