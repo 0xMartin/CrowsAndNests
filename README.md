@@ -33,10 +33,10 @@
 - [ ] Kamera
   - [ ] Limity pohybu v ose Y (kamera se nesmi dostat pod mapu pokud hrac pada dolu)
   - [ ] Treseni kamery pri ruznych efektech
-- [ ] Design
+- [ ] Design - ELISKA
   - [ ] Vytvorit ikonu hry
   - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
-- [ ] Menu
+- [ ] Menu - PAVEL
   - [ ] 3D scena v pozadi menu
   - [ ] Styl tlacitek a textu
   - [ ] Settings menu
@@ -44,39 +44,39 @@
   - [ ] Game settings menu
   - [ ] Game lobby menu
   - [ ] Connect to host menu
-- [ ] Zvukove efekty
-  - [ ] Menu
-    - [ ] Zvuk stiknuti tlacika
-    - [ ] Zvuk pripojeni do lobby hry
-    - [ ] Zvuk spusteni hry
-  - [ ] Vrana
-    - [ ] Chuze
-    - [ ] Vyskok
-    - [ ] Dopad
-    - [ ] Utok
-  - [ ] Vejce
-    - [ ] Rozbiti
-  - [ ] Hnizdo
-    - [ ] Efekt zniceni "pokud hnizdno zmizi z areny / rozbije ho nejaka herni udalost"
-  - [ ] Globalni
-    - [ ] Zvuk vitezstvi
-    - [ ] Zvuk porazky
-    - [ ] Zvuk smrti "pokud vrana vypadne z areny"
-    - [ ] Odpocet "tick hodin"
-  - [ ] Soundtrack
+- [ ] Zvukove efekty - PAVEL
+  - [ ] Menu - PAVEL
+    - [ ] Zvuk stiknuti tlacika - PAVEL
+    - [ ] Zvuk pripojeni do lobby hry - PAVEL
+    - [ ] Zvuk spusteni hry - PAVEL
+  - [ ] Vrana - PAVEL
+    - [ ] Chuze - PAVEL
+    - [ ] Vyskok - PAVEL
+    - [ ] Dopad - PAVEL
+    - [ ] Utok - PAVEL
+  - [ ] Vejce - PAVEL
+    - [ ] Rozbiti - PAVEL
+  - [ ] Hnizdo - PAVEL
+    - [ ] Efekt zniceni "pokud hnizdno zmizi z areny / rozbije ho nejaka herni udalost" - PAVEL
+  - [ ] Globalni - PAVEL
+    - [ ] Zvuk vitezstvi- PAVEL
+    - [ ] Zvuk porazky- PAVEL
+    - [ ] Zvuk smrti "pokud vrana vypadne z areny"- PAVEL
+    - [ ] Odpocet "tick hodin"- PAVEL
+  - [ ] Soundtrack - 
     - [ ] Menu
     - [X] Arena - soundtrack1 
       - ? https://www.youtube.com/watch?v=FNZMAlO_gi4&list=PLlHY6e7WCV6NaJ5iNMoAWSEasT83GOaDo&index=5&ab_channel=GamesMusic
     - [ ] Arena - soundtrack2
       - ? https://www.youtube.com/watch?v=OA5oLdbvoLc&ab_channel=IsaacMoring
     - [ ] Arena - soundtrack3
-- [ ] Efekty sceny
+- [ ] Efekty sceny - ELISKA
   - [X] Pridani mlhy
   - [ ] Particly v prostredi
   - [X] Nocni scena
   - [ ] Prizpusobyt osvetleni
   - [X] Skybox (noc/vesmir/...)
-- [X] Postprocessing
+- [X] Postprocessing 
   - [X] Vyladeni barev obrazu
 - [ ] Skript pro rizeni areny
   - [X] Zakladni struktura
@@ -92,12 +92,7 @@
   - [ ] Bitva o vejce
   - [ ] Padajici predmety
   - [ ] ?? napady na dalsi hry
-- [ ] Multiplayer LAN
-  - [ ] Lokalni server
-  - [ ] Klient
-  - [ ] Synchronizace dat
-  - [ ] Komponanta pro prenos dat
-  - [ ] Automatizovany vyhledavac serveru v lokalni siti
+
   
 ### Dodatecne vylepseni: 
 * zlepsit vzhled modelu 
@@ -106,3 +101,9 @@
 * vytvorit trailer video ke hre (Premiera + After Effects)
 * publikace na steam 
 * moznost hrani na verejnem serveru ()
+- [ ] Multiplayer LAN
+  - [ ] Lokalni server
+  - [ ] Klient
+  - [ ] Synchronizace dat
+  - [ ] Komponanta pro prenos dat
+  - [ ] Automatizovany vyhledavac serveru v lokalni siti
