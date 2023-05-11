@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,7 +23,7 @@ namespace GameGlobal
         /// Aplikaci naviguje do definovane sceny
         /// </summary>
         /// <param name="sceneID">ID cilove sceny</param>
-        public static void navigateTo(int sceneID) {
+        public static void NavigateTo(int sceneID) {
             Scene.current_scene = sceneID;
             SceneManager.LoadScene(sceneID);
         }
@@ -43,7 +41,7 @@ namespace GameGlobal
         /// <param name="type">Typ tridy, ve ktere se tato funkce vola. Pouzit command "typeof()"</param>
         /// <param name="message">Zprava, ktera bude ve zprave obsazena</param>
         /// <returns>Sestavenou zpravu ve formatu [{TYPE_TRIDY}] >> {ZPRAVA} </returns>
-        public static string buildMessage(System.Type type, string message) {
+        public static string BuildMessage(System.Type type, string message) {
             return "[" + type.Name + "] >> " + message;
         }
 
@@ -51,7 +49,7 @@ namespace GameGlobal
         /// Navrati aktualni aplikacni cas. Funkce se vyuziva v kombinaci s funkci 
         /// "time_passed(start, time)". Urceno pro neblokujici mereni casu, napr.: v update metodach...
         /// </summary>
-        public static float time_start() {
+        public static float Time_start() {
             return Time.time;
         }
 
@@ -61,7 +59,7 @@ namespace GameGlobal
         /// <param name="start">Cas pocatku mereni casoveho useku (v sekundach)</param>
         /// <param name="time">Celkova doba cekani (v sekundach)</param>
         /// <returns>Navrati "true" pokud cas od priniho namereneho casu "start" bude vetsi nez cas definovany v argumentu "time"</returns>
-        public static bool time_passed(float start, float time) {
+        public static bool Time_passed(float start, float time) {
             return (Time.time - start) > time;
         }
 
@@ -71,7 +69,7 @@ namespace GameGlobal
         /// <param name="start">Cas pocatku mereni casoveho useku (v sekundach)</param>
         /// <param name="time">Celkova doba cekani (v sekundach)</param>
         /// <returns>Pocet zbyvajicich sekund</returns>
-        public static float time_remaining(float start, float time) {
+        public static float Time_remaining(float start, float time) {
             return Mathf.Max((time + start) - Time.time, 0);
         }
     }

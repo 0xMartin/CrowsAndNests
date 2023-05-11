@@ -4,40 +4,40 @@ using UnityEngine;
 using Cinemachine;
 using System;
 
-namespace MiniGameUtils
+namespace Game.MiniGame
 {
 
     /// <summary>
     /// rozhrani pro minihru
     /// </summary>
-    interface MiniGame
+    interface MiniGameObj
     {
         /// <summary>
         /// Navrati jmeno minihry
         /// </summary>
         /// <returns>Jmeno minihry</returns>
-        public string getName();
+        public string GetName();
 
         /// <summary>
         /// Inicializuje minihru
         /// </summary>
         /// <param name="cntx">Reference na MiniGameContext</param>
-        public void initGame(MiniGameContext cntx);
+        public void InitGame(MiniGameContext cntx);
 
         /// <summary>
         /// Update metoda minihry
         /// </summary>
-        public void updateGame();
+        public void UpdateGame();
 
         /// <summary>
         /// Spusti minihru
         /// </summary>
-        public void runGame();
+        public void RunGame();
 
         /// <summary>
         /// Ukonci minihru
         /// </summary>
-        public void endGame();
+        public void EndGame();
 
         /// <summary>
         /// Overi jestli minihra neskoncila uz
@@ -56,7 +56,7 @@ namespace MiniGameUtils
         public int Lives { get; set; } /** pocet zivotu hrace (i hrac ktery ma 0 zivotu muze hrat v dalsi hre, pokud ma vsak zaporny pocet zivotu je jiz ze hry vyrazen) */
         public bool IsLiving { get; set; } /** pokud je "true" hrac je zivi, pokud "false" uz zemrel v dane minihre a jeho pohled kamery je nastaven na spectator mod */
         public GameObject ModelRef { get; set; } /** reference na model hrace */
-        public CinemachineFreeLook cinemachineFreeLook { get; set; } /** reference na cinemachine kontroler kamery hrace (pokud jde o hrace ktery hraje z jineho PC bude NULL) */
+        public CinemachineFreeLook CinemachineFreeLook { get; set; } /** reference na cinemachine kontroler kamery hrace (pokud jde o hrace ktery hraje z jineho PC bude NULL) */
     }
 
     /// <summary>
@@ -81,21 +81,23 @@ namespace MiniGameUtils
     /// </summary>
     public class MiniGameContext
     {
-        public GameObject[] Nests { get; private set; } /** pole vsech hnizd areny */
-        public Transform[] Spawns { get; private set; } /** pole vsech spawnu areny */
-        private List<int> usedSpawns; /** list obsahuje indexy jiz pouzitych spawnu */
-        public Transform SpectatorPos { get; private set; } /** pozice pro spektatora */
+        public GameObject[] Nests { get; protected set; } /** pole vsech hnizd areny */
+        public Transform[] Spawns { get; protected set; } /** pole vsech spawnu areny */
+        private List<int> UsedSpawns; /** list obsahuje indexy jiz pouzitych spawnu */
+        public Transform SpectatorPos { get; protected set; } /** pozice pro spektatora */
 
         // delegat pro pozadavek na vytvoreni efekty (pozadavky zpracovava hlavni ridici skript areny)
         public delegate void FxCreateRequest(string type, Vector3 pos, Quaternion rot); 
-        public FxCreateRequest FxCallback { get; private set; }
+        public FxCreateRequest FxCallback { get; protected set; }
+
+        public int YMin {get; protected set; }
 
         public List<Player> Players { get; set; } /** list z hraci */
 
         public GameStats GameStats { get; set; } /** statistiky hry */
 
-        public bool IsGameRunning {get; private set;} /** status o tom zda je hra spustna */
-        public bool IsGameEnd {get; private set;} /** status o tom zda je hra u konce */
+        public bool IsGameRunning {get; protected set;} /** status o tom zda je hra spustna */
+        public bool IsGameEnd {get; protected set;} /** status o tom zda je hra u konce */
 
         /// <summary>
         /// Vytvorit kontext pro minihry
@@ -104,17 +106,20 @@ namespace MiniGameUtils
         /// <param name="spawns">Pole referenci na vsechny spawnpoint pro hrace</param>
         /// <param name="spectatorPos">Reference na pozici pro spectator mod</param>
         /// <param name="fxCallback">Callback pro vytvareni efektu ve scene hry</param>
-        public MiniGameContext(GameObject[] nests, Transform[] spawns, Transform spectatorPos, FxCreateRequest fxCallback)
+        /// <param name="yMin">Y souradnice kdy je hrac detekovan jako vypadany z areny</param>
+        public MiniGameContext(GameObject[] nests, Transform[] spawns, Transform spectatorPos, FxCreateRequest fxCallback, int yMin)
         {
             this.Nests = nests;
             this.Spawns = spawns;
             this.SpectatorPos = SpectatorPos;
             this.FxCallback = fxCallback;
+            this.YMin = yMin;
+
             this.IsGameRunning = false;
             this.IsGameEnd = false;
             this.Players = new List<Player>();
-            this.usedSpawns = new List<int>();
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Context created. Nest count: " +
+            this.UsedSpawns = new List<int>();
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Context created. Nest count: " +
                 this.Nests.Length.ToString() + ", Spawns: " + this.Spawns.Length.ToString()));
         }
 
@@ -122,7 +127,7 @@ namespace MiniGameUtils
         /// Nahodne spawne zvoleneho hrace do areny. Vybrany spawn bude mozne pouzit az po resetu areny, funkce "resetArena()"
         /// </summary>
         /// <param name="player">Reference na hrace, ktery ma byt v arene spawnut</param>
-        public void randomSpawnPlayer(Player player)
+        public void RandomSpawnPlayer(Player player)
         {
             // pokud hrac jiz nema zivoty
             if (player.Lives < 0)
@@ -130,10 +135,10 @@ namespace MiniGameUtils
                 return;
             }
             // pokud z nejakeho duvodu hrac nema model nebo jiz neni volny spawn
-            if (player.ModelRef == null || usedSpawns.Count >= Spawns.Length)
+            if (player.ModelRef == null || UsedSpawns.Count >= Spawns.Length)
             {
                 // selhalo
-                setPlayerCameraFollowPoint(player, this.SpectatorPos, true);
+                SetPlayerCameraFollowPoint(player, this.SpectatorPos, true);
                 return;
             }
 
@@ -147,11 +152,11 @@ namespace MiniGameUtils
                 if (cnt <= 0)
                 {
                     // selhalo
-                    setPlayerCameraFollowPoint(player, this.SpectatorPos, true);
+                    SetPlayerCameraFollowPoint(player, this.SpectatorPos, true);
                     return;
                 }
-            } while (usedSpawns.Contains(rnd));
-            usedSpawns.Add(rnd);
+            } while (UsedSpawns.Contains(rnd));
+            UsedSpawns.Add(rnd);
 
             // nastavi mu pozici spawnu
             player.ModelRef.transform.position = Spawns[rnd].transform.position;
@@ -161,18 +166,18 @@ namespace MiniGameUtils
             player.ModelRef.SetActive(true);
 
             // nastavi kameru hrace na sledovani jeho modelu
-            setPlayerCameraFollowPoint(player, player.ModelRef.transform, false);
+            SetPlayerCameraFollowPoint(player, player.ModelRef.transform, false);
 
             // log
             Vector3 pos = Spawns[rnd].transform.position;
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] spawned on: " + pos.x + ", " + pos.y + ", " + pos.z));
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] spawned on: " + pos.x + ", " + pos.y + ", " + pos.z));
         }
 
         /// <summary>
         /// Zabije hrace a skryje jeho model. Po jeho smrti bude po chvili jeho pohled premisten na spectator pozici.
         /// </summary>
         /// <param name="player">Reference na hrace ktery bude zapit/odstranen.</param>
-        public void killPlayer(Player player)
+        public void KillPlayer(Player player)
         {
             // snizi hraci pocet zivotu, pokud jiz nema zivoty konci ve hre a muze se jen divat
             // hrace je bran jako vyrazeny ze hry pokud mam zaporny pocet zivotu
@@ -189,21 +194,21 @@ namespace MiniGameUtils
             }
 
             // po uplinuti kratekho casu mu nastavy pohled na spectator kameru
-            setPlayerCameraFollowPoint(player, this.SpectatorPos, true);
+            SetPlayerCameraFollowPoint(player, this.SpectatorPos, true);
 
             // log
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] killed"));
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] killed"));
         }
 
         /// <summary>
         /// Zabiju vsechny hrace ve hre
         /// </summary>
-        public void killAllPlayers()
+        public void KillAllPlayers()
         {
             // zabije vsechny hrace
             foreach (Player p in Players)
             {
-                killPlayer(p);
+                KillPlayer(p);
             }
         }
 
@@ -212,20 +217,20 @@ namespace MiniGameUtils
         /// </summary>
         /// <param name="player">Reference na hrace, kteremu budou pridany zivoty</param>
         /// <param name="lives">Pocet pridanych zivotu</param>
-        public void addPlayerLives(Player player, int lives)
+        public void AddPlayerLives(Player player, int lives)
         {
             // prida hraci definovany pocet zivotu
             player.Lives += lives;
 
             // log
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] added " + lives.ToString() + " lives"));
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Player [" + player.Name + "] added " + lives.ToString() + " lives"));
         }
 
         /// <summary>
         /// Skryje vybrane hnizdu.
         /// </summary>
         /// <param name="id">ID vybraneho hnizda. ID je index v poli.</param>
-        public void hideNest(int id)
+        public void HideNest(int id)
         {
             if (id < 0 || id >= Nests.Length)
             {
@@ -243,14 +248,14 @@ namespace MiniGameUtils
             }
 
             // log
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Nest [" + id + "] is now deactivated"));
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Nest [" + id + "] is now deactivated"));
         }
 
         /// <summary>
         /// Zobrazi hnizdo.
         /// </summary>
         /// <param name="id">ID vybraneho hnizda. ID je index v poli.</param>
-        public void showNest(int id)
+        public void ShowNest(int id)
         {
             if (id < 0 || id >= Nests.Length)
             {
@@ -268,13 +273,13 @@ namespace MiniGameUtils
             }
 
             // log
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Nest [" + id + "] is now active"));
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Nest [" + id + "] is now active"));
         }
 
         /// <summary>
         /// Resetuje celou arenu do puvodniho stavu. Zobrazi vsechny hnizda. Deaktivuje model vsech hracu. Resetuje blokovani spawnu.
         /// </summary>
-        public void resetArena()
+        public void ResetArena()
         {
             // aktivuje vsechny hnizda
             foreach (GameObject nest in this.Nests)
@@ -292,10 +297,10 @@ namespace MiniGameUtils
             }
 
             // uvoleni vsech spawnu
-            usedSpawns.Clear();
+            UsedSpawns.Clear();
 
             // log
-            Debug.Log(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Arene reset done"));
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Arene reset done"));
         }
 
         /// <summary>
@@ -305,31 +310,31 @@ namespace MiniGameUtils
         /// <param name="player">Reference na hrace</param>
         /// <param name="position">Reference na pozici objektu, kterou bude kamera sledovat</param>
         /// <param name="spectator">True -> jde o spectator mod. False -> normalni mod ovladani postavy</param>
-        public void setPlayerCameraFollowPoint(Player player, Transform position, bool spectator)
+        public void SetPlayerCameraFollowPoint(Player player, Transform position, bool spectator)
         {
-            if (player.cinemachineFreeLook == null)
+            if (player.CinemachineFreeLook == null)
             {
-                Debug.LogError(GameGlobal.Util.buildMessage(typeof(MiniGameContext), "Failed to set player camer look on objects. Camera is null."));
+                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Failed to set player camer look on objects. Camera is null."));
                 return;
             }
             // nastavi pohled kamery hrace na zvoleny objekt a zaroven ho bude kamera nasledovat
-            player.cinemachineFreeLook.LookAt = position;
-            player.cinemachineFreeLook.Follow = position;
+            player.CinemachineFreeLook.LookAt = position;
+            player.CinemachineFreeLook.Follow = position;
             // konfigurace cinemachine
             if (spectator)
             {
-                player.cinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
-                player.cinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
+                player.CinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
+                player.CinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
                 {
                     m_Height = 1 * 3,
                     m_Radius = 8 * 3
                 };
-                player.cinemachineFreeLook.m_Orbits[1] = new CinemachineFreeLook.Orbit
+                player.CinemachineFreeLook.m_Orbits[1] = new CinemachineFreeLook.Orbit
                 {
                     m_Height = 8 * 3,
                     m_Radius = 12 * 3
                 };
-                player.cinemachineFreeLook.m_Orbits[2] = new CinemachineFreeLook.Orbit
+                player.CinemachineFreeLook.m_Orbits[2] = new CinemachineFreeLook.Orbit
                 {
                     m_Height = 17 * 3,
                     m_Radius = 4 * 3
@@ -337,18 +342,18 @@ namespace MiniGameUtils
             }
             else
             {
-                player.cinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
-                player.cinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
+                player.CinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
+                player.CinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
                 {
                     m_Height = 1,
                     m_Radius = 8
                 };
-                player.cinemachineFreeLook.m_Orbits[1] = new CinemachineFreeLook.Orbit
+                player.CinemachineFreeLook.m_Orbits[1] = new CinemachineFreeLook.Orbit
                 {
                     m_Height = 8,
                     m_Radius = 12
                 };
-                player.cinemachineFreeLook.m_Orbits[2] = new CinemachineFreeLook.Orbit
+                player.CinemachineFreeLook.m_Orbits[2] = new CinemachineFreeLook.Orbit
                 {
                     m_Height = 17,
                     m_Radius = 4
@@ -361,7 +366,7 @@ namespace MiniGameUtils
         /// hraci kteri mohou hrat maji pocet zivotu >= 0
         /// </summary>
         /// <returns></returns>
-        public int countLivingPlayers() {
+        public int CountLivingPlayers() {
             int cnt = 0;
             foreach(Player p in this.Players) {
                 if(p.Lives >= 0) {
@@ -374,7 +379,7 @@ namespace MiniGameUtils
         /// <summary>
         /// ukonci hru
         /// </summary>
-        public void endGame() {
+        public void EndGame() {
             this.IsGameRunning = false;
             this.IsGameEnd = true;
         }
@@ -382,9 +387,18 @@ namespace MiniGameUtils
         /// <summary>
         /// spusti hru
         /// </summary>
-        public void startGame() {
+        public void StartGame() {
             this.IsGameRunning = true;
             this.IsGameEnd = false;
+        }
+
+        /// <summary>
+        /// Detekuje zda hrac vypadnul dolu s areny
+        /// </summary>
+        /// <returns>True -> hrac vypadnul</returns>
+        public bool IsPlayerDropDown(Player player) {
+            Debug.Log(player.ModelRef.transform.position.y);
+            return player.ModelRef.transform.position.y < this.YMin;
         }
 
     }
