@@ -83,6 +83,9 @@ namespace Game
 
         [Header("UI-Text")]
         public GameObject countdownObj;
+        public GameObject playerLiveObj;
+        public GameObject playerScoreObj;
+        public GameObject gameNameObj;
 
         /*********************************************************************************************************/
         // LOKALNI PROMENNE
@@ -90,6 +93,8 @@ namespace Game
 
         private List<MiniGameObj> minigames; /** Seznam dostupnych miniher */
         private MiniGameObj activeMinigame; /** Aktivni minihra */
+
+        private Player localPlayer; /** Instance lokalniho hrace */
 
         // aktualni stav ve kterem se hra nachazi
         private enum GameState
@@ -112,12 +117,19 @@ namespace Game
         private float startTime; /** promenna pro uchovavani casu */
 
         private TextMeshProUGUI countdownText; /** Count down text */
+        private TextMeshProUGUI playerLiveText; /** Text poctem zivotu hrace */
+        private TextMeshProUGUI playerScoreText; /** Text poctem skore hrace */
+        private TextMeshProUGUI gameNameText; /** Text s nazvem aktualni minihry */
 
         void Start()
         {
             // init
             this.countdownText = this.countdownObj.GetComponent<TextMeshProUGUI>();
             this.countdownText.enabled = false;
+
+            this.playerLiveText = this.playerLiveObj.GetComponent<TextMeshProUGUI>();
+            this.playerScoreText = this.playerScoreObj.GetComponent<TextMeshProUGUI>();
+            this.gameNameText = this.gameNameObj.GetComponent<TextMeshProUGUI>();
 
             // defaultni stav hry
             this.state = GameState.NotRunning;
@@ -147,15 +159,16 @@ namespace Game
                 this.Y_MIN
             );
             // vytvoreni lokalniho hrace (hrace se jmenem = "you" + jako jediny hrac v lokalni arene bude mit kameru, ostatni hraci ze site budou pridavani postupne)
-            this.gameCntx.Players = new List<Player>() {
-                new Player() {
+            this.localPlayer = new Player() {
                     Name = "You",
                     Score = 0,
                     Lives = 3,
                     IsLiving = true,
                     ModelRef = this.playerRef,
                     CinemachineFreeLook = this.cinemachineCam 
-                }     
+            };
+            this.gameCntx.Players = new List<Player>() {
+                this.localPlayer     
             };
 
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "Init done"));
@@ -322,6 +335,9 @@ namespace Game
                     }    
                 }
             }
+
+            // refresh game stats
+            RefreshGameStats();
         }
 
         /// <summary>
@@ -431,6 +447,29 @@ namespace Game
                     if (nestShowFxPrefab != null)
                     {
                         Instantiate(nestShowFxPrefab, pos, rot);
+                    }
+                    break;
+            }
+        }
+
+        private void RefreshGameStats() {
+            this.playerLiveText.SetText(this.localPlayer.Lives.ToString() + " " + '\u2665');
+            this.playerScoreText.SetText(this.localPlayer.Score.ToString() + " " + '+');
+            switch(this.state) {
+                case GameState.GameStarting:
+                    this.gameNameText.SetText("Starting");
+                    break;
+                case GameState.MiniGameEnding:
+                    this.gameNameText.SetText("End");
+                    break;
+                case GameState.GameEnding:
+                    this.gameNameText.SetText("Game over");
+                    break;
+                default:
+                    if(this.activeMinigame != null) {
+                        this.gameNameText.SetText(this.activeMinigame.GetName());
+                    } else {
+                        this.gameNameText.SetText("Waiting");
                     }
                     break;
             }

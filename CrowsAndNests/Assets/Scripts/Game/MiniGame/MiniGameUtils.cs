@@ -407,6 +407,13 @@ namespace Game.MiniGame
             return player.ModelRef.transform.position.y < this.YMin;
         }
 
+        /// <summary>
+        /// Zobrazi ve hre obrazek. Slouzi pro zobrazeni libovolneho obrazku v horni casti canvas plochy.
+        /// </summary>
+        public void ShowImage(Texture2D image) {
+            
+        }
+
     }
 
 }
