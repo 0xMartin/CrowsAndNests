@@ -41,12 +41,7 @@ namespace Game.MiniGame
 
         public override bool EndGame()
         {
-            //  vycisteni
-            foreach(GameObject obj in toRemove) {
-                if(obj != null) {
-                    Destroy(obj);
-                }
-            }
+            Invoke(nameof(Clear), 3.0f);
 
             // skore
             if(this.score >= this.winScore) {
@@ -55,6 +50,15 @@ namespace Game.MiniGame
             }
 
             return false;
+        }
+
+        private void Clear() {
+            //  vycisteni
+            foreach(GameObject obj in toRemove) {
+                if(obj != null) {
+                    Destroy(obj);
+                }
+            }
         }
 
         public override string GetName()
@@ -66,7 +70,7 @@ namespace Game.MiniGame
         {
             base.cntx = cntx;
             this.score = 0;
-            this.winScore = this.MIN_EGGS_TO_BREAK;
+            this.winScore = this.MIN_EGGS_TO_BREAK + (int) Mathf.Floor((cntx.GameStats.GameCount - 1) / 2);
             this.time = this.MAX_TIME_LIMIT;
             this.eggMap.Clear();
             this.toRemove.Clear();

@@ -4,6 +4,7 @@ using TMPro;
 using Game.MiniGame;
 using Cinemachine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Game
 {
@@ -121,7 +122,9 @@ namespace Game
             this.TimeCallBack("");
             this.centerImage = this.centerImageObj.GetComponent<RawImage>();
             this.centerImage.enabled = false;
+        }
 
+        void Awake() {
             // defaultni stav hry
             this.state = GameState.NotRunning;
 
@@ -143,6 +146,10 @@ namespace Game
                 new MiniGameContext.ImageShowRequest(ImageCallback),
                 new MiniGameContext.TimeShowRequest(TimeCallBack)
             );
+
+            // vytvoreni hry
+            this.gameCntx.GameStats = new GameStats("Game 1");
+
             // vytvoreni lokalniho hrace (hrace se jmenem = "you" + jako jediny hrac v lokalni arene bude mit kameru, ostatni hraci ze site budou pridavani postupne)
             this.gameCntx.LocalPlayer = new Player() {
                     Name = "You",
@@ -214,6 +221,9 @@ namespace Game
                         break;
                     }
 
+                    // dalsi kolo
+                    this.gameCntx.GameStats.GameCount += 1;
+
                     // inicializace vybrane minihry
                     this.activeMinigame.ReinitGame(this.gameCntx);
 
@@ -265,6 +275,14 @@ namespace Game
                     // vykonavani smycky aktualne spustene minihry
                     this.activeMinigame.UpdateGame();
 
+                    // overi zda muze hra pokracovat (single - hrac zije)
+                    if(this.gameCntx.LocalPlayer.Lives < 0) 
+                    {
+                        this.state = GameState.GameEnding;
+                        startTime = GameGlobal.Util.TimeStart();
+                        this.gameCntx.EndGame();
+                    }
+
                     // pokud je minihra u konce prejde do stavu "MiniGame_Ending
                     if (this.activeMinigame.IsGameOver())
                     {
@@ -287,6 +305,9 @@ namespace Game
                     // pocka definovany cas a zobrazi viteze minihry
                     if (GameGlobal.Util.TimePassed(startTime, MINIGAME_END_TIME))
                     {
+                        // skryje time label 
+                        TimeCallBack("");
+
                         // spocita pocet zijicich hracu
                         if (this.gameCntx.CountLivingPlayers() >= MIN_PLAYERS)
                         {
@@ -304,23 +325,19 @@ namespace Game
 
 
                 case GameState.GameEnding:
+                    // zobrazi info a skryje time label
+                    ShowCountDown(0, true, "Game Over");
+                    TimeCallBack("");
+
                     // odpocet do ukonceni areny
                     if (GameGlobal.Util.TimePassed(startTime, GAME_END_TIME))
                     {
                         // odstrani kontext
                         this.gameCntx = null;
                         // prechod do sceny a zobrazeni vitezu celkove hry
-                        //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TODO
+                        SceneManager.LoadScene(GameGlobal.Scene.GAME_OVER);
                     }
                     break;
-            }
-
-            // dodatecne prechodove pravidla
-            if (this.gameCntx.IsGameEnd)
-            {
-                this.state = GameState.GameEnding;
-                // zaznamenani startovniho casu pro odmereni game end timu
-                startTime = GameGlobal.Util.TimeStart();
             }
 
             // no in minigame akce
