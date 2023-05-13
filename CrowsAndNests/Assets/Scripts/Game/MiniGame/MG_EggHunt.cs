@@ -45,7 +45,16 @@ namespace Game.MiniGame
         /// </summary>
         public void UpdateGame()
         {
-            this.cntx.IsPlayerDropDown(this.cntx.Players[0]);
+            foreach(Player p in this.cntx.Players) 
+            {
+                if(this.cntx.IsPlayerDropDown(p)) 
+                {
+                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "KILLED: " + p.ToString()));
+                    this.cntx.KillPlayer(p);
+                    this.cntx.RandomSpawnPlayer(p);
+                    this.cntx.ClearUsedNestsStatus();    
+                }    
+            }
         }
 
     }

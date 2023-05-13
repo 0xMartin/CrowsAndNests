@@ -49,7 +49,7 @@ namespace Game.MiniGame
     /// <summary>
     /// struktura uchovavajici potrebne data o hraci
     /// </summary>
-    public struct Player
+    public class Player
     {
         public string Name { get; set; } /** jmeno hrace */
         public int Score { get; set; } /** skore hrace */
@@ -62,7 +62,7 @@ namespace Game.MiniGame
     /// <summary>
     /// statistiky hry (celkove => vsechny odehrane minihry)
     /// </summary>
-    public struct GameStats
+    public class GameStats
     {
         public string GameName { get; set; } /** Jmeno hry. Volene hostitelem areny */
         public int GameCount { get; set; } /** Kolik her bylo jiz odehrani.  */
@@ -321,7 +321,7 @@ namespace Game.MiniGame
         {
             if (player.CinemachineFreeLook == null)
             {
-                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Failed to set player camer look on objects. Camera is null."));
+                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MiniGameContext), "Failed to set player camera look on objects. Camera is null."));
                 return;
             }
             // nastavi pohled kamery hrace na zvoleny objekt a zaroven ho bude kamera nasledovat
@@ -411,7 +411,7 @@ namespace Game.MiniGame
         /// Zobrazi ve hre obrazek. Slouzi pro zobrazeni libovolneho obrazku v horni casti canvas plochy.
         /// </summary>
         public void ShowImage(Texture2D image) {
-            
+
         }
 
     }

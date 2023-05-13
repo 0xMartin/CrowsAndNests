@@ -171,6 +171,10 @@ namespace Game
                 this.localPlayer     
             };
 
+            // nahodny spawn lokalniho hrace
+            this.gameCntx.RandomSpawnPlayer(this.localPlayer);
+            this.gameCntx.ClearUsedNestsStatus();    
+
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "Init done"));
 
             // automaticke spusteni (pak predelat => pokud pujde o multiplayer => spusti hru az se pripoji hraci)
@@ -183,7 +187,7 @@ namespace Game
 
             float remaining;
 
-            // stavovy automat (hlavni herni rozhodovaci smycka)
+            // stavovy automat (hlavni herni rozhodovaci logiky)
             switch (this.state)
             {
                 case GameState.NotRunning:
@@ -325,10 +329,13 @@ namespace Game
             }
 
             // no in minigame akce
-            if(this.state != GameState.MiniGameRunning) {
+            if(this.state != GameState.MiniGameRunning) 
+            {
                 // automaticky respawn hrace bez odebirani zivotu
-                foreach(Player p in this.gameCntx.Players) {
-                    if(this.gameCntx.IsPlayerDropDown(p)) {
+                foreach(Player p in this.gameCntx.Players)
+                {
+                    if(this.gameCntx.IsPlayerDropDown(p)) 
+                    {
                         Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "RESPAWN IN WAIT MODE: " + p.ToString()));
                         this.gameCntx.RandomSpawnPlayer(p);
                         this.gameCntx.ClearUsedNestsStatus();    
@@ -373,19 +380,7 @@ namespace Game
         private void ShowCountDown(int number, bool show, string zeroText)
         {
             // zobrazeni / skryti textu
-            if (show)
-            {
-                TextMeshFader f = this.countdownObj.GetComponent<TextMeshFader>();
-                if (!f.isFading)
-                {
-                    f.FadeIn();
-                }
-            }
-            else
-            {
-                TextMeshFader f = this.countdownObj.GetComponent<TextMeshFader>();
-                f.FadeOut();
-            }
+            this.countdownText.enabled = show;
 
             // zobrazeni cisla odpoctu / text misto 0
             if(number == 0) 
@@ -405,18 +400,7 @@ namespace Game
         public void ShowMinigameName(bool show)
         {
             // zobrazeni / skryti textu
-            TextMeshFader f = this.countdownObj.GetComponent<TextMeshFader>();
-            if (show)
-            {
-                if (!f.isFading)
-                {
-                    f.FadeIn();
-                }
-            }
-            else
-            {
-                f.FadeOut();
-            }
+            this.countdownText.enabled = show;
 
             // vypise jmeno aktivni minihry
             if (this.activeMinigame != null)
@@ -453,7 +437,7 @@ namespace Game
         }
 
         private void RefreshGameStats() {
-            this.playerLiveText.SetText(this.localPlayer.Lives.ToString() + " " + '\u2665');
+            this.playerLiveText.SetText(Mathf.Max(0, this.localPlayer.Lives).ToString() + " " + '\u2665');
             this.playerScoreText.SetText(this.localPlayer.Score.ToString() + " " + '+');
             switch(this.state) {
                 case GameState.GameStarting:
