@@ -304,6 +304,13 @@ namespace Game.MiniGame
         }
 
         /// <summary>
+        /// Vycisti statusi vsech zabranych hnizd. Je nutne provest pokud 
+        /// </summary>
+        public void ClearUsedNestsStatus() {
+            UsedSpawns.Clear();
+        }
+
+        /// <summary>
         /// Nastavi pohled a nasledovani kamery hrace na definovany objekt. Pokud hrac kameru nema nic se neprovede.
         /// To nastene jen v pripade poku pujde o hrace ktery hraje na jinem zarizeni pres LAN mod.
         /// </summary>
@@ -397,7 +404,6 @@ namespace Game.MiniGame
         /// </summary>
         /// <returns>True -> hrac vypadnul</returns>
         public bool IsPlayerDropDown(Player player) {
-            Debug.Log(player.ModelRef.transform.position.y);
             return player.ModelRef.transform.position.y < this.YMin;
         }
 

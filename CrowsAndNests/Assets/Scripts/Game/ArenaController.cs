@@ -178,7 +178,7 @@ namespace Game
                     if (this.gameCntx.IsGameRunning)
                     {
                         this.state = GameState.GameStarting;
-                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO Game_Starting"));
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO GameStarting"));
                     }
 
                     // zaznamenani startovniho casu pro odpocet startu cele hry
@@ -198,7 +198,7 @@ namespace Game
                     if (GameGlobal.Util.Time_passed(startTime, GAME_START_TIME))
                     {
                         this.state = GameState.MiniGameSelecting;
-                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGame_Selecting"));
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameSelecting"));
                     }
                     break;
 
@@ -217,7 +217,7 @@ namespace Game
 
                     // hned prejde do stavu "MiniGame_ShowName"
                     this.state = GameState.MiniGameShowName;
-                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGame_ShowName"));
+                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameShowName"));
 
                     // zobrazi jmeno zvolene minihry
                     ShowMinigameName(true);
@@ -231,7 +231,7 @@ namespace Game
                     {
                         // hned prejde do stavu "MiniGame_Starting"
                         this.state = GameState.MiniGameStarting;
-                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGame_Starting"));
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameStarting"));
 
                         // zaznamenani startovniho casu pro odpocet mini hry
                         startTime = GameGlobal.Util.Time_start();
@@ -251,7 +251,7 @@ namespace Game
 
                         // prejde do stavu "MiniGame_Running"
                         this.state = GameState.MiniGameRunning;
-                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGame_Running"));
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameRunning"));
                     }
                     break;
 
@@ -264,7 +264,7 @@ namespace Game
                     if (this.activeMinigame.IsGameOver())
                     {
                         this.state = GameState.MiniGameEnding;
-                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGame_Ending"));
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameEnding"));
                         // zaznamenani startovniho casu pro odmereni minigame end timu
                         startTime = GameGlobal.Util.Time_start();
                     }
@@ -280,7 +280,7 @@ namespace Game
                         {
                             // pokud je dostatek hracu smycky se opakuje a jde znovu vybrat dalsi minihru
                             this.state = GameState.MiniGameSelecting;
-                            Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGame_Selecting"));
+                            Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameSelecting"));
                         }
                         else
                         {
@@ -309,6 +309,18 @@ namespace Game
                 this.state = GameState.GameEnding;
                 // zaznamenani startovniho casu pro odmereni game end timu
                 startTime = GameGlobal.Util.Time_start();
+            }
+
+            // no in minigame akce
+            if(this.state != GameState.MiniGameRunning) {
+                // automaticky respawn hrace bez odebirani zivotu
+                foreach(Player p in this.gameCntx.Players) {
+                    if(this.gameCntx.IsPlayerDropDown(p)) {
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "RESPAWN IN WAIT MODE: " + p.ToString()));
+                        this.gameCntx.RandomSpawnPlayer(p);
+                        this.gameCntx.ClearUsedNestsStatus();    
+                    }    
+                }
             }
         }
 
