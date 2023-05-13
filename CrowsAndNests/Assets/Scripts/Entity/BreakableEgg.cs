@@ -18,6 +18,10 @@ public class BreakableEgg : MonoBehaviour
  
     private bool isBroken; /** stav zda je vejce uz rozbite*/
 
+    // delegat pro rozbiti vejce
+    public delegate void EggBreakAction(BreakableEgg egg); 
+    public EggBreakAction EggBreakCallback { get; set; }
+
     private void Start() {
         isBroken = false;
 
@@ -56,6 +60,9 @@ public class BreakableEgg : MonoBehaviour
         if(dustParticle != null) {
             dustParticle.Play();
         }
+
+        // invoke callback
+        this.EggBreakCallback.Invoke(this);
 
         Invoke(nameof(breakEgg2), 0.1f);
     }

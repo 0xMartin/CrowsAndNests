@@ -4,46 +4,49 @@ using UnityEngine;
 using Cinemachine;
 using System;
 
-namespace Game.MiniGame
+namespace Game.MiniGame 
 {
 
     /// <summary>
     /// rozhrani pro minihru
     /// </summary>
-    interface MiniGameObj
+    public abstract class MiniGameObj : MonoBehaviour
     {
+        protected MiniGameContext cntx {get; set; }
+
         /// <summary>
         /// Navrati jmeno minihry
         /// </summary>
         /// <returns>Jmeno minihry</returns>
-        public string GetName();
+        public abstract string GetName();
 
         /// <summary>
-        /// Inicializuje minihru
+        /// Inicializuje/Reincializuje minihru
         /// </summary>
         /// <param name="cntx">Reference na MiniGameContext</param>
-        public void InitGame(MiniGameContext cntx);
+        public abstract void ReinitGame(MiniGameContext cntx);
 
         /// <summary>
         /// Update metoda minihry
         /// </summary>
-        public void UpdateGame();
+        public abstract void UpdateGame();
 
         /// <summary>
         /// Spusti minihru
         /// </summary>
-        public void RunGame();
+        public abstract void RunGame();
 
         /// <summary>
         /// Ukonci minihru
         /// </summary>
-        public void EndGame();
+        /// <returns>Navrati 'true' pokud lokalni hrac vyhral minihru</returns>
+        public abstract bool EndGame();
 
         /// <summary>
         /// Overi jestli minihra neskoncila uz
         /// </summary>
         /// <returns>True -> minihra jiz zkoncila</returns>
-        public bool IsGameOver();
+        public abstract bool IsGameOver();
     }
 
     /// <summary>
@@ -86,12 +89,9 @@ namespace Game.MiniGame
         private List<int> UsedSpawns; /** list obsahuje indexy jiz pouzitych spawnu */
         public Transform SpectatorPos { get; protected set; } /** pozice pro spektatora */
 
-        // delegat pro pozadavek na vytvoreni efekty (pozadavky zpracovava hlavni ridici skript areny)
-        public delegate void FxCreateRequest(string type, Vector3 pos, Quaternion rot); 
-        public FxCreateRequest FxCallback { get; protected set; }
+        public int YMin {get; protected set; } /** Y souradnice kdy je hrac detekovan jako vypadany z areny */
 
-        public int YMin {get; protected set; }
-
+        public Player LocalPlayer {get; set; } /** Instance lokalniho hrace */
         public List<Player> Players { get; set; } /** list z hraci */
 
         public GameStats GameStats { get; set; } /** statistiky hry */
@@ -99,20 +99,39 @@ namespace Game.MiniGame
         public bool IsGameRunning {get; protected set;} /** status o tom zda je hra spustna */
         public bool IsGameEnd {get; protected set;} /** status o tom zda je hra u konce */
 
+        // delegat pro pozadavek na vytvoreni efekty (pozadavky zpracovava hlavni ridici skript areny)
+        public delegate void FxCreateRequest(string type, Vector3 pos, Quaternion rot); 
+        public FxCreateRequest FxCallback { get; protected set; }
+
+        // delegat pro nastaveni obrazku
+        public delegate void ImageShowRequest(Texture2D image); 
+        public ImageShowRequest ImageCallback { get; protected set; }
+
+        // delegat pro nastaveni casu
+        public delegate void TimeShowRequest(string time); 
+        public TimeShowRequest TimeCallback { get; protected set; }
+
         /// <summary>
         /// Vytvorit kontext pro minihry
         /// </summary>
         /// <param name="nests">Pole referenci na vsechny hnizda</param>
         /// <param name="spawns">Pole referenci na vsechny spawnpoint pro hrace</param>
         /// <param name="spectatorPos">Reference na pozici pro spectator mod</param>
-        /// <param name="fxCallback">Callback pro vytvareni efektu ve scene hry</param>
         /// <param name="yMin">Y souradnice kdy je hrac detekovan jako vypadany z areny</param>
-        public MiniGameContext(GameObject[] nests, Transform[] spawns, Transform spectatorPos, FxCreateRequest fxCallback, int yMin)
+        /// <param name="fxCallback">Callback pro vytvareni efektu ve scene hry</param>
+        /// <param name="imageCallback">Callback pro nastavovani zobrazovaneho obrazku</param>
+        /// <param name="timeCallback">Callback pro nastaveni zobrazovaneho casu</param>
+        public MiniGameContext(GameObject[] nests, Transform[] spawns, 
+                               Transform spectatorPos, int yMin, 
+                               FxCreateRequest fxCallback, ImageShowRequest imageCallback, 
+                               TimeShowRequest timeCallback)
         {
             this.Nests = nests;
             this.Spawns = spawns;
             this.SpectatorPos = spectatorPos;
             this.FxCallback = fxCallback;
+            this.ImageCallback = imageCallback;
+            this.TimeCallback = timeCallback;
             this.YMin = yMin;
 
             this.IsGameRunning = false;
@@ -338,7 +357,6 @@ namespace Game.MiniGame
             // konfigurace cinemachine
             if (spectator)
             {
-                Debug.Log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SPECT");
                 player.CinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
                 player.CinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
                 {
@@ -420,7 +438,15 @@ namespace Game.MiniGame
         /// Zobrazi ve hre obrazek. Slouzi pro zobrazeni libovolneho obrazku v horni casti canvas plochy.
         /// </summary>
         public void ShowImage(Texture2D image) {
+            this.ImageCallback.Invoke(image);
+        }
 
+        /// <summary>
+        /// Zobrazi cas/text v horni casti canvasu
+        /// </summary>
+        /// <param name="time">Cas/string</param>
+        public void showTime(string time) {
+            this.TimeCallback.Invoke(time);
         }
 
     }

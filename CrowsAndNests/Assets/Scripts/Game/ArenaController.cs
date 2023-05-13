@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Game.MiniGame;
-using Menu;
 using Cinemachine;
+using UnityEngine.UI;
 
 namespace Game
 {
@@ -44,22 +43,7 @@ namespace Game
          * [16] [15] [14] [13]
          **/
         [Header("Nets")]
-        public GameObject nest1;
-        public GameObject nest2;
-        public GameObject nest3;
-        public GameObject nest4;
-        public GameObject nest5;
-        public GameObject nest6;
-        public GameObject nest7;
-        public GameObject nest8;
-        public GameObject nest9;
-        public GameObject nest10;
-        public GameObject nest11;
-        public GameObject nest12;
-        public GameObject nest13;
-        public GameObject nest14;
-        public GameObject nest15;
-        public GameObject nest16;
+        public List<GameObject> nests;
 
         /**
          * Znaroreni pozic spawnu v arene
@@ -69,10 +53,7 @@ namespace Game
          * [3] [*] [*] [2]
          **/
         [Header("Spawns")]
-        public Transform spawn0;
-        public Transform spawn1;
-        public Transform spawn2;
-        public Transform spawn3;
+        public List<Transform> spawns;
 
         [Header("Spectator")]
         public Transform spectator;
@@ -86,6 +67,11 @@ namespace Game
         public GameObject playerLiveObj;
         public GameObject playerScoreObj;
         public GameObject gameNameObj;
+        public GameObject timeObj;
+        public GameObject centerImageObj;
+
+        [Header("MiniGames")]
+        public List<GameObject> gamesList;
 
         /*********************************************************************************************************/
         // LOKALNI PROMENNE
@@ -93,8 +79,6 @@ namespace Game
 
         private List<MiniGameObj> minigames; /** Seznam dostupnych miniher */
         private MiniGameObj activeMinigame; /** Aktivni minihra */
-
-        private Player localPlayer; /** Instance lokalniho hrace */
 
         // aktualni stav ve kterem se hra nachazi
         private enum GameState
@@ -116,14 +100,16 @@ namespace Game
 
         private float startTime; /** promenna pro uchovavani casu */
 
-        private TextMeshProUGUI countdownText; /** Count down text */
-        private TextMeshProUGUI playerLiveText; /** Text poctem zivotu hrace */
-        private TextMeshProUGUI playerScoreText; /** Text poctem skore hrace */
-        private TextMeshProUGUI gameNameText; /** Text s nazvem aktualni minihry */
+        private TextMeshProUGUI countdownText;      /** Hlavni count down text [veliky] */
+        private TextMeshProUGUI playerLiveText;     /** Text poctem zivotu hrace */
+        private TextMeshProUGUI playerScoreText;    /** Text poctem skore hrace */
+        private TextMeshProUGUI gameNameText;       /** Text s nazvem aktualni minihry */
+        private TextMeshProUGUI timeText;           /** Text s aktualni zbyvajicim casem do konce minihry */
+        private RawImage centerImage;               /** Objekt pro zobrazovani libovolniych obrazku */
 
         void Start()
         {
-            // init
+            // init UI v canvas
             this.countdownText = this.countdownObj.GetComponent<TextMeshProUGUI>();
             this.countdownText.enabled = false;
 
@@ -131,35 +117,34 @@ namespace Game
             this.playerScoreText = this.playerScoreObj.GetComponent<TextMeshProUGUI>();
             this.gameNameText = this.gameNameObj.GetComponent<TextMeshProUGUI>();
 
+            this.timeText = this.timeObj.GetComponent<TextMeshProUGUI>();
+            this.TimeCallBack("");
+            this.centerImage = this.centerImageObj.GetComponent<RawImage>();
+            this.centerImage.enabled = false;
+
             // defaultni stav hry
             this.state = GameState.NotRunning;
 
-            // vytvoreni mini her
+            // vytvoreni seznamu mini her z predanych referenci objaktu obsahujicih minihry
             this.minigames = new List<MiniGameObj>();
-            this.minigames.Add(new MG_EggHunt());
+            foreach(GameObject g in gamesList) {
+                MiniGameObj mg = g.GetComponent<MiniGameObj>();
+                this.minigames.Add(mg);    
+            }
 
             // <KONTEXT MINI HERNI ARENY>
-            // hnizda
-            GameObject[] nests = new GameObject[]{
-                nest1, nest2, nest3, nest4,
-                nest5, nest6, nest7, nest8,
-                nest9, nest10, nest11, nest12,
-                nest13, nest14, nest15, nest16
-            };
-            // spawny
-            Transform[] spawns = new Transform[] {
-                spawn0, spawn1, spawn2, spawn3
-            };
             // vytvoreni kontextu
             this.gameCntx = new MiniGameContext(
-                nests,
-                spawns,
+                nests.ToArray(),
+                spawns.ToArray(),
                 spectator,
+                this.Y_MIN,
                 new MiniGameContext.FxCreateRequest(FxCallback),
-                this.Y_MIN
+                new MiniGameContext.ImageShowRequest(ImageCallback),
+                new MiniGameContext.TimeShowRequest(TimeCallBack)
             );
             // vytvoreni lokalniho hrace (hrace se jmenem = "you" + jako jediny hrac v lokalni arene bude mit kameru, ostatni hraci ze site budou pridavani postupne)
-            this.localPlayer = new Player() {
+            this.gameCntx.LocalPlayer = new Player() {
                     Name = "You",
                     Score = 0,
                     Lives = 0,
@@ -168,11 +153,11 @@ namespace Game
                     CinemachineFreeLook = this.cinemachineCam 
             };
             this.gameCntx.Players = new List<Player>() {
-                this.localPlayer     
+                this.gameCntx.LocalPlayer     
             };
 
             // nahodny spawn lokalniho hrace
-            this.gameCntx.RandomSpawnPlayer(this.localPlayer);
+            this.gameCntx.RandomSpawnPlayer(this.gameCntx.LocalPlayer);
             this.gameCntx.ClearUsedNestsStatus();    
 
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "Init done"));
@@ -199,20 +184,20 @@ namespace Game
                     }
 
                     // zaznamenani startovniho casu pro odpocet startu cele hry
-                    startTime = GameGlobal.Util.Time_start();
+                    startTime = GameGlobal.Util.TimeStart();
                     break;
 
 
                 case GameState.GameStarting:
                     // odpocet do spusteni hry
-                    remaining = GameGlobal.Util.Time_remaining(startTime, GAME_START_TIME);
+                    remaining = GameGlobal.Util.TimeRemaining(startTime, GAME_START_TIME);
                     ShowCountDown((int)remaining, true, "");
                     if(remaining == 0) {
                         ShowCountDown(0, false, "");
                     }
 
                     // cas uplynul
-                    if (GameGlobal.Util.Time_passed(startTime, GAME_START_TIME))
+                    if (GameGlobal.Util.TimePassed(startTime, GAME_START_TIME))
                     {
                         this.state = GameState.MiniGameSelecting;
                         Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameSelecting"));
@@ -230,7 +215,7 @@ namespace Game
                     }
 
                     // inicializace vybrane minihry
-                    this.activeMinigame.InitGame(this.gameCntx);
+                    this.activeMinigame.ReinitGame(this.gameCntx);
 
                     // hned prejde do stavu "MiniGame_ShowName"
                     this.state = GameState.MiniGameShowName;
@@ -240,31 +225,34 @@ namespace Game
                     ShowMinigameName(true);
 
                     // zaznamenani startovniho casu pro zobrazeni jmena minihry
-                    startTime = GameGlobal.Util.Time_start();
+                    startTime = GameGlobal.Util.TimeStart();
                     break;
 
                 case GameState.MiniGameShowName:
-                    if (GameGlobal.Util.Time_passed(startTime, MINIGAME_NAME_TIME))
+                    if (GameGlobal.Util.TimePassed(startTime, MINIGAME_NAME_TIME))
                     {
                         // hned prejde do stavu "MiniGame_Starting"
                         this.state = GameState.MiniGameStarting;
                         Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameStarting"));
 
                         // zaznamenani startovniho casu pro odpocet mini hry
-                        startTime = GameGlobal.Util.Time_start();
+                        startTime = GameGlobal.Util.TimeStart();
                     }
                     break;
 
                 case GameState.MiniGameStarting:
                     // zobrazeni odpoctu do zacatku minihry
-                    remaining = GameGlobal.Util.Time_remaining(startTime, MINIGAME_START_TIME);
+                    remaining = GameGlobal.Util.TimeRemaining(startTime, MINIGAME_START_TIME);
                     ShowCountDown((int)remaining, true, "Start");
 
                     // pokud je odpocet u konce prejde do stavu "MiniGame_Running"
-                    if (GameGlobal.Util.Time_passed(startTime, MINIGAME_START_TIME))
+                    if (GameGlobal.Util.TimePassed(startTime, MINIGAME_START_TIME))
                     {
                         // skryje cas
                         ShowCountDown(0, false, "Start");
+
+                        // spusti mini hru
+                        this.activeMinigame.RunGame();
 
                         // prejde do stavu "MiniGame_Running"
                         this.state = GameState.MiniGameRunning;
@@ -280,17 +268,24 @@ namespace Game
                     // pokud je minihra u konce prejde do stavu "MiniGame_Ending
                     if (this.activeMinigame.IsGameOver())
                     {
+                        // ukonci mini hru
+                        if(this.activeMinigame.EndGame()) {
+                            ShowCountDown(0, true, "Win");   
+                        } else {
+                            ShowCountDown(0, true, "Lose");    
+                        }
+
                         this.state = GameState.MiniGameEnding;
                         Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "GO TO MiniGameEnding"));
                         // zaznamenani startovniho casu pro odmereni minigame end timu
-                        startTime = GameGlobal.Util.Time_start();
+                        startTime = GameGlobal.Util.TimeStart();
                     }
                     break;
 
 
                 case GameState.MiniGameEnding:
                     // pocka definovany cas a zobrazi viteze minihry
-                    if (GameGlobal.Util.Time_passed(startTime, MINIGAME_END_TIME))
+                    if (GameGlobal.Util.TimePassed(startTime, MINIGAME_END_TIME))
                     {
                         // spocita pocet zijicich hracu
                         if (this.gameCntx.CountLivingPlayers() >= MIN_PLAYERS)
@@ -310,7 +305,7 @@ namespace Game
 
                 case GameState.GameEnding:
                     // odpocet do ukonceni areny
-                    if (GameGlobal.Util.Time_passed(startTime, GAME_END_TIME))
+                    if (GameGlobal.Util.TimePassed(startTime, GAME_END_TIME))
                     {
                         // odstrani kontext
                         this.gameCntx = null;
@@ -325,7 +320,7 @@ namespace Game
             {
                 this.state = GameState.GameEnding;
                 // zaznamenani startovniho casu pro odmereni game end timu
-                startTime = GameGlobal.Util.Time_start();
+                startTime = GameGlobal.Util.TimeStart();
             }
 
             // no in minigame akce
@@ -436,9 +431,33 @@ namespace Game
             }
         }
 
+        /// <summary>
+        /// Zobrazi obrazek ve hre. Obrazek zustava zobrazen dokud neni nahrazen jinym. Pokud dojde null hodnota, predchozi obrazek je skryt.
+        /// </summary>
+        /// <param name="image">2D Texture / obrazek ktery ma byt zobrazen</param>
+        private void ImageCallback(Texture2D image) {
+            if(image == null) {
+                this.centerImage.enabled = false;
+            } else {
+                this.centerImage.enabled = true;
+                this.centerImage.texture = image;
+            }
+        }
+
+        /// <summary>
+        /// Nastavi cas zbyvajici do konce minihry.
+        /// </summary>
+        /// <param name="time">Cas/string</param>
+        private void TimeCallBack(string time) {
+            this.timeText.SetText(time);
+        }
+
+        /// <summary>
+        /// Refresh hernich statistiky lokalniho hrace (zivoty, skore, nazev hry/stav)
+        /// </summary>
         private void RefreshGameStats() {
-            this.playerLiveText.SetText(Mathf.Max(0, this.localPlayer.Lives).ToString() + " " + '\u2665');
-            this.playerScoreText.SetText(this.localPlayer.Score.ToString() + " " + '+');
+            this.playerLiveText.SetText(Mathf.Max(0, this.gameCntx.LocalPlayer.Lives).ToString() + " " + '\u2665');
+            this.playerScoreText.SetText(this.gameCntx.LocalPlayer.Score.ToString() + " " + '+');
             switch(this.state) {
                 case GameState.GameStarting:
                     this.gameNameText.SetText("Starting");

@@ -17,7 +17,7 @@ namespace GameGlobal
         public static readonly int SETTINGS_MENU = 3;
 
         public static readonly int ARENA = 4;
-        public static readonly int GAME_OVEW = 5;
+        public static readonly int GAME_OVER = 5;
 
         /// <summary>
         /// Aplikaci naviguje do definovane sceny
@@ -49,7 +49,7 @@ namespace GameGlobal
         /// Navrati aktualni aplikacni cas. Funkce se vyuziva v kombinaci s funkci 
         /// "time_passed(start, time)". Urceno pro neblokujici mereni casu, napr.: v update metodach...
         /// </summary>
-        public static float Time_start() {
+        public static float TimeStart() {
             return Time.time;
         }
 
@@ -59,7 +59,7 @@ namespace GameGlobal
         /// <param name="start">Cas pocatku mereni casoveho useku (v sekundach)</param>
         /// <param name="time">Celkova doba cekani (v sekundach)</param>
         /// <returns>Navrati "true" pokud cas od priniho namereneho casu "start" bude vetsi nez cas definovany v argumentu "time"</returns>
-        public static bool Time_passed(float start, float time) {
+        public static bool TimePassed(float start, float time) {
             return (Time.time - start) > time;
         }
 
@@ -69,8 +69,19 @@ namespace GameGlobal
         /// <param name="start">Cas pocatku mereni casoveho useku (v sekundach)</param>
         /// <param name="time">Celkova doba cekani (v sekundach)</param>
         /// <returns>Pocet zbyvajicich sekund</returns>
-        public static float Time_remaining(float start, float time) {
+        public static float TimeRemaining(float start, float time) {
             return Mathf.Max((time + start) - Time.time, 0);
+        }
+
+        /// <summary>
+        /// Prevede sekundy na formatovany cas "00:00"
+        /// </summary>
+        /// <param name="seconds">Cas v sekundach</param>
+        /// <returns>Formatovani string obsahuji cas</returns>
+        public static string FormatTime(float seconds) {
+            int min = Mathf.FloorToInt(seconds / 60f);
+            int sec = Mathf.FloorToInt(seconds % 60f);
+            return string.Format("{0:00}:{1:00}", min, sec);
         }
     }
 
