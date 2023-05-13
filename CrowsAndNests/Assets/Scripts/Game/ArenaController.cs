@@ -162,7 +162,7 @@ namespace Game
             this.localPlayer = new Player() {
                     Name = "You",
                     Score = 0,
-                    Lives = 3,
+                    Lives = 0,
                     IsLiving = true,
                     ModelRef = this.playerRef,
                     CinemachineFreeLook = this.cinemachineCam 

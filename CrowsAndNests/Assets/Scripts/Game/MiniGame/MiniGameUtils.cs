@@ -111,7 +111,7 @@ namespace Game.MiniGame
         {
             this.Nests = nests;
             this.Spawns = spawns;
-            this.SpectatorPos = SpectatorPos;
+            this.SpectatorPos = spectatorPos;
             this.FxCallback = fxCallback;
             this.YMin = yMin;
 
@@ -164,6 +164,8 @@ namespace Game.MiniGame
 
             // aktivuje hraci model ve hre
             player.ModelRef.SetActive(true);
+            Animator animator = player.ModelRef.GetComponent<Animator>();
+            animator.Update(0f);
 
             // nastavi kameru hrace na sledovani jeho modelu
             SetPlayerCameraFollowPoint(player, player.ModelRef.transform, false);
@@ -186,10 +188,16 @@ namespace Game.MiniGame
                 return;
             }
             player.Lives = Mathf.Max(-1, player.Lives - 1);
+            if(player.Lives < 0) {
+                player.IsLiving = false;
+            }
 
             // deaktivuje hraci jeho model ze hry
             if (player.ModelRef != null)
             {
+                Animator animator = player.ModelRef.GetComponent<Animator>();
+                animator.StopPlayback();
+                animator.Rebind();
                 player.ModelRef.SetActive(false);
             }
 
@@ -330,6 +338,7 @@ namespace Game.MiniGame
             // konfigurace cinemachine
             if (spectator)
             {
+                Debug.Log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SPECT");
                 player.CinemachineFreeLook.m_Orbits = new CinemachineFreeLook.Orbit[3];
                 player.CinemachineFreeLook.m_Orbits[0] = new CinemachineFreeLook.Orbit
                 {
@@ -400,11 +409,11 @@ namespace Game.MiniGame
         }
 
         /// <summary>
-        /// Detekuje zda hrac vypadnul dolu s areny
+        /// Detekuje zda hrac vypadl dolu z areny. Pokud je hraci jiz mrtev nebude navracet true
         /// </summary>
         /// <returns>True -> hrac vypadnul</returns>
         public bool IsPlayerDropDown(Player player) {
-            return player.ModelRef.transform.position.y < this.YMin;
+            return player.ModelRef.transform.position.y < this.YMin && player.IsLiving;
         }
 
         /// <summary>
