@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -83,6 +84,54 @@ namespace GameGlobal
             int sec = Mathf.FloorToInt(seconds % 60f);
             return string.Format("{0:00}:{1:00}", min, sec);
         }
+    }
+
+    /// <summary>
+    /// Trida umoznujici prenosy dat mezi moduly
+    /// </summary>
+    public class DataTransmissions {
+
+        private static DataTransmissions _instance;
+
+        public static DataTransmissions Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new DataTransmissions();
+                    _instance.dict = new Dictionary<string, object>();
+                }
+                return _instance;
+            }
+        }
+
+        private Dictionary<string, object> dict;
+
+        /// <summary>
+        /// Generická metoda pro ukládání dat
+        /// </summary>
+        /// <param name="key">Klic dat</param>
+        /// <param name="data">Data</param>
+        /// <typeparam name="T">Typ dat</typeparam>
+        public void SaveData(string key, object data)
+        {
+            this.dict[key] = data;
+        }
+
+        /// <summary>
+        /// Generická metoda pro získávání dat
+        /// </summary>
+        /// <param name="key">Klic dat</param>
+        /// <typeparam name="T">Typ dat</typeparam>
+        /// <returns>Ulozena data</returns>
+        public T LoadData<T>(string key)
+        {
+            object data = null;
+            this.dict.TryGetValue(key, out data);
+            return (T) data;
+        }
+
     }
 
 }

@@ -296,7 +296,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124609296}
-  m_LocalRotation: {x: 0.28978413, y: -0.000000016468093, z: 0.0000000049861373, w: 0.95709205}
+  m_LocalRotation: {x: 0.28978413, y: 0.00000001646809, z: -0.000000004986136, w: 0.95709205}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1557,12 +1557,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daaedae6b8061a84e978ac54f8a6a0d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeDuration: 1
-  textMesh: {fileID: 716836316}
-  <isFading>k__BackingField: 0
-  fadeTimer: 0
-  startAlpha: 0
-  endAlpha: 1
 --- !u!114 &716836316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1729,7 +1723,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718285836}
-  m_LocalRotation: {x: 0.2561604, y: 0.000000016632276, z: -0.0000000044075934, w: 0.9666343}
+  m_LocalRotation: {x: 0.2561604, y: -0.000000016632276, z: 0.0000000044075934, w: 0.9666343}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2762,8 +2756,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -166, y: 71}
-  m_SizeDelta: {x: 160.0682, y: 81.6931}
+  m_AnchoredPosition: {x: -168.55, y: 71}
+  m_SizeDelta: {x: 154.96, y: 81.693}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1021018090
 MonoBehaviour:
@@ -2777,12 +2771,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daaedae6b8061a84e978ac54f8a6a0d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeDuration: 1
-  textMesh: {fileID: 1021018091}
-  <isFading>k__BackingField: 0
-  fadeTimer: 0
-  startAlpha: 0
-  endAlpha: 1
 --- !u!114 &1021018091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2830,8 +2818,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2866,7 +2854,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -7.506363, y: 0, z: -21.15593, w: 0}
+  m_margin: {x: -0.7152252, y: 0, z: 0.06637573, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3651,8 +3639,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 71}
-  m_SizeDelta: {x: 160.0682, y: 81.6931}
+  m_AnchoredPosition: {x: 19.1001, y: 71}
+  m_SizeDelta: {x: 220.3396, y: 81.693}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1163238682
 MonoBehaviour:
@@ -3666,12 +3654,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daaedae6b8061a84e978ac54f8a6a0d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeDuration: 1
-  textMesh: {fileID: 1163238683}
-  <isFading>k__BackingField: 0
-  fadeTimer: 0
-  startAlpha: 0
-  endAlpha: 1
 --- !u!114 &1163238683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3719,8 +3701,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3755,7 +3737,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -20.331131, y: 0, z: -67.32526, w: 0}
+  m_margin: {x: 0.042266846, y: 0, z: -0.2626953, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4268,10 +4250,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe6e14e39f5b4324082da05182969c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GAME_START_TIME: 3
-  GAME_END_TIME: 10
-  MINIGAME_NAME_TIME: 3
-  MINIGAME_START_TIME: 5
+  GAME_START_TIME: 1
+  GAME_END_TIME: 1
+  MINIGAME_NAME_TIME: 1
+  MINIGAME_START_TIME: 1
   MINIGAME_END_TIME: 5
   MAX_PLAYERS: 4
   MIN_PLAYERS: 1
@@ -5124,12 +5106,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daaedae6b8061a84e978ac54f8a6a0d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeDuration: 1
-  textMesh: {fileID: 1682629581}
-  <isFading>k__BackingField: 0
-  fadeTimer: 0
-  startAlpha: 0
-  endAlpha: 1
 --- !u!114 &1682629581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11433,11 +11409,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 796821778674731379, guid: 51b4aff5606351f4a9904ea3f8b8f8aa, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000033264552
+      value: -0.000000033264552
       objectReference: {fileID: 0}
     - target: {fileID: 796821778674731379, guid: 51b4aff5606351f4a9904ea3f8b8f8aa, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000008815187
+      value: 0.000000008815187
       objectReference: {fileID: 0}
     - target: {fileID: 796821778674731379, guid: 51b4aff5606351f4a9904ea3f8b8f8aa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

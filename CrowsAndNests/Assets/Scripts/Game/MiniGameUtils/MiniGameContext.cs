@@ -4,80 +4,8 @@ using UnityEngine;
 using Cinemachine;
 using System;
 
-namespace Game.MiniGame 
+namespace Game.MiniGameUtils 
 {
-
-    /// <summary>
-    /// rozhrani pro minihru
-    /// </summary>
-    public abstract class MiniGameObj : MonoBehaviour
-    {
-        protected MiniGameContext cntx {get; set; }
-
-        /// <summary>
-        /// Navrati jmeno minihry
-        /// </summary>
-        /// <returns>Jmeno minihry</returns>
-        public abstract string GetName();
-
-        /// <summary>
-        /// Inicializuje/Reincializuje minihru
-        /// </summary>
-        /// <param name="cntx">Reference na MiniGameContext</param>
-        public abstract void ReinitGame(MiniGameContext cntx);
-
-        /// <summary>
-        /// Update metoda minihry
-        /// </summary>
-        public abstract void UpdateGame();
-
-        /// <summary>
-        /// Spusti minihru
-        /// </summary>
-        public abstract void RunGame();
-
-        /// <summary>
-        /// Ukonci minihru
-        /// </summary>
-        /// <returns>Navrati 'true' pokud lokalni hrac vyhral minihru</returns>
-        public abstract bool EndGame();
-
-        /// <summary>
-        /// Overi jestli minihra neskoncila uz
-        /// </summary>
-        /// <returns>True -> minihra jiz zkoncila</returns>
-        public abstract bool IsGameOver();
-    }
-
-    /// <summary>
-    /// struktura uchovavajici potrebne data o hraci
-    /// </summary>
-    public class Player
-    {
-        public string Name { get; set; } /** jmeno hrace */
-        public int Score { get; set; } /** skore hrace */
-        public int Lives { get; set; } /** pocet zivotu hrace (i hrac ktery ma 0 zivotu muze hrat v dalsi hre, pokud ma vsak zaporny pocet zivotu je jiz ze hry vyrazen) */
-        public bool IsLiving { get; set; } /** pokud je "true" hrac je zivi, pokud "false" uz zemrel v dane minihre a jeho pohled kamery je nastaven na spectator mod */
-        public GameObject ModelRef { get; set; } /** reference na model hrace */
-        public CinemachineFreeLook CinemachineFreeLook { get; set; } /** reference na cinemachine kontroler kamery hrace (pokud jde o hrace ktery hraje z jineho PC bude NULL) */
-    }
-
-    /// <summary>
-    /// statistiky hry (celkove => vsechny odehrane minihry)
-    /// </summary>
-    public class GameStats
-    {
-        public string GameName { get; set; } /** Jmeno hry. Volene hostitelem areny */
-        public int GameCount { get; set; } /** Kolik her bylo jiz odehrani.  */
-        public DateTime GameStart { get; private set; } /** Cas zapoceti hry */
-
-        public GameStats(string gameName)
-        {
-            this.GameName = gameName;
-            this.GameCount = 0;
-            this.GameStart = DateTime.Now;
-        }
-    };
 
     /// <summary>
     /// kontext mini hry, obsahuje vsechny data potrebne pro chod minihry v arene
@@ -416,6 +344,11 @@ namespace Game.MiniGame
         public void EndGame() {
             this.IsGameRunning = false;
             this.IsGameEnd = true;
+            this.GameStats.GameEnd = DateTime.Now;
+            foreach(Player p in this.Players) {
+                this.GameStats.NameList.Add(p.Name);
+                this.GameStats.ScoreList.Add(Mathf.Round(p.Score));
+            }
         }
 
         /// <summary>
@@ -424,6 +357,7 @@ namespace Game.MiniGame
         public void StartGame() {
             this.IsGameRunning = true;
             this.IsGameEnd = false;
+            this.GameStats.GameStart = DateTime.Now;
         }
 
         /// <summary>

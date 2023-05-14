@@ -303,6 +303,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   back: {fileID: 1744870429}
+  scoreTextObj: {fileID: 1863290811}
+  timeTextObj: {fileID: 1204134567}
+  roundTextObj: {fileID: 410067467}
 --- !u!1001 &257978715
 PrefabInstance:
   m_ObjectHideFlags: 0

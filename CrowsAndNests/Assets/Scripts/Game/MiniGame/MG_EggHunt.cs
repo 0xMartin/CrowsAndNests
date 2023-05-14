@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Game.MiniGameUtils;
 
 namespace Game.MiniGame
 {
@@ -30,6 +31,8 @@ namespace Game.MiniGame
          */
         private Dictionary<BreakableEgg, int> eggMap = new Dictionary<BreakableEgg, int>(); 
 
+        private int lastBreakID; /** ID pozice posledniho rozbiteho vejce */
+
         /** 
          * Seznam objektu ktere budou odstraneni pri konci 
          */
@@ -43,9 +46,12 @@ namespace Game.MiniGame
         {
             Invoke(nameof(Clear), 3.0f);
 
-            // skore
+            // vitez minihry?
             if(this.score >= this.winScore) {
+                // prida zivot
                 this.cntx.AddPlayerLives(this.cntx.LocalPlayer, 1);
+                // globalni skore +15
+                this.cntx.LocalPlayer.Score += 15f;
                 return true;
             }
 
@@ -118,10 +124,10 @@ namespace Game.MiniGame
         private void SpawnRandomEgg(int count = 1) {
             for(int i = 0; i < count && this.eggMap.Count < this.EGGS_TO_SPAWN; ++i) {
                 int id = -1, j = 0;
-                // nahodne vygeneruje pozici (takove hnizdo ktere je volne)
+                // nahodne vygeneruje pozici (takove hnizdo ktere je volne a zaroven nejde o hnizdo na ktere bylo vejce rozbito naposled)
                 do {
                     id = (int) UnityEngine.Random.Range(0, this.cntx.Nests.Length);
-                } while(this.eggMap.Values.Contains(id) && j++ < 100);
+                } while((this.eggMap.Values.Contains(id) || this.lastBreakID == id) && j++ < 100);
 
                 if(id >= 0) {
                     // vytvori instanci noveho vejce a jako parent object mu priradi hnizdo
@@ -145,6 +151,14 @@ namespace Game.MiniGame
         /// </summary>
         /// <param name="egg">Rozbite vejce</param>
         private void EggBreakCallback(BreakableEgg egg) {
+            // globalni skore +0.5
+            this.cntx.LocalPlayer.Score += 0.5f;
+
+            // lokalni 
+            int id;
+            if(this.eggMap.TryGetValue(egg, out id)) {
+                this.lastBreakID = id;
+            }
             this.score++;
             this.eggMap.Remove(egg);  
             this.SpawnRandomEgg(); 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Game.MiniGame;
+using Game.MiniGameUtils;
 using Cinemachine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -148,7 +148,7 @@ namespace Game
             );
 
             // vytvoreni hry
-            this.gameCntx.GameStats = new GameStats("Game 1");
+            this.CreateGame("Game 1");
 
             // vytvoreni lokalniho hrace (hrace se jmenem = "you" + jako jediny hrac v lokalni arene bude mit kameru, ostatni hraci ze site budou pridavani postupne)
             this.gameCntx.LocalPlayer = new Player() {
@@ -318,6 +318,8 @@ namespace Game
                         else
                         {
                             // pokud uz neni dostatek hracu je hra ukoncena
+                            this.state = GameState.GameEnding;
+                            startTime = GameGlobal.Util.TimeStart();
                             this.gameCntx.EndGame();
                         }
                     }
@@ -332,6 +334,8 @@ namespace Game
                     // odpocet do ukonceni areny
                     if (GameGlobal.Util.TimePassed(startTime, GAME_END_TIME))
                     {
+                        // ulozi herni statistiku do player pref
+                        GameGlobal.DataTransmissions.Instance.SaveData("final_stats", this.gameCntx.GameStats.Clone());
                         // odstrani kontext
                         this.gameCntx = null;
                         // prechod do sceny a zobrazeni vitezu celkove hry
@@ -344,14 +348,17 @@ namespace Game
             if(this.state != GameState.MiniGameRunning) 
             {
                 // automaticky respawn hrace bez odebirani zivotu
-                foreach(Player p in this.gameCntx.Players)
+                if(this.gameCntx != null) 
                 {
-                    if(this.gameCntx.IsPlayerDropDown(p)) 
+                    foreach(Player p in this.gameCntx.Players)
                     {
-                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "RESPAWN IN WAIT MODE: " + p.ToString()));
-                        this.gameCntx.RandomSpawnPlayer(p);
-                        this.gameCntx.ClearUsedNestsStatus();    
-                    }    
+                        if(this.gameCntx.IsPlayerDropDown(p)) 
+                        {
+                            Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "RESPAWN IN WAIT MODE: " + p.ToString()));
+                            this.gameCntx.RandomSpawnPlayer(p);
+                            this.gameCntx.ClearUsedNestsStatus();    
+                        }    
+                    }
                 }
             }
 
@@ -473,8 +480,10 @@ namespace Game
         /// Refresh hernich statistiky lokalniho hrace (zivoty, skore, nazev hry/stav)
         /// </summary>
         private void RefreshGameStats() {
+            if(this.gameCntx == null) return;
+
             this.playerLiveText.SetText(Mathf.Max(0, this.gameCntx.LocalPlayer.Lives).ToString() + " " + '\u2665');
-            this.playerScoreText.SetText(this.gameCntx.LocalPlayer.Score.ToString() + " " + '+');
+            this.playerScoreText.SetText(Mathf.Round(this.gameCntx.LocalPlayer.Score).ToString() + " " + '+');
             switch(this.state) {
                 case GameState.GameStarting:
                     this.gameNameText.SetText("Starting");
