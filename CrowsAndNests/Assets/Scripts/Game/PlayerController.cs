@@ -171,8 +171,8 @@ namespace Game
                     // pohyb ve vzduchu (smer kterym se hrac diva)
                     if (jumpBounce)
                     {
-                        // zpetny odraz od prekazky
-                        rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f, ForceMode.Force);
+                        // zpetny odraz od prekazky (pustupny)
+                        rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f / 100, ForceMode.Force);
                     }
                     else
                     {
