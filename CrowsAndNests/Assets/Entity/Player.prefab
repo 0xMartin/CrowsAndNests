@@ -5316,8 +5316,8 @@ MonoBehaviour:
   moveForce: 100
   maxMoveSpeed: 6
   groundDrag: 0.5
-  jumpForce: 190
-  airMultiplier: 7
+  jumpForce: 250
+  airMultiplier: 5.3
   rotationSpeed: 3
   gravity: 40
   jumpKey: 32

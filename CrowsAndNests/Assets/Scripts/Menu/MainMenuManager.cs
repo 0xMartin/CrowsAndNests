@@ -45,7 +45,7 @@ namespace Menu
         void OnClick_ButtonSingle()
         {
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Singleplayer clicked"));
-            SceneManager.LoadScene(GameGlobal.Scene.ARENA_MENU);
+            SceneManager.LoadScene(GameGlobal.Scene.ARENA);
         }
 
         void OnClick_ButtonMulti()

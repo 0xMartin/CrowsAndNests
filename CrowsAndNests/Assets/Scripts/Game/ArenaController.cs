@@ -81,6 +81,8 @@ namespace Game
         private List<MiniGameObj> minigames; /** Seznam dostupnych miniher */
         private MiniGameObj activeMinigame; /** Aktivni minihra */
 
+        private int sameGameCounter = 0; /** Citac stejnych miniher v serii */
+
         // aktualni stav ve kterem se hra nachazi
         private enum GameState
         {
@@ -386,6 +388,15 @@ namespace Game
         private void RandomMiniGameSelect()
         {
             int rng = Random.Range(0, minigames.Count);
+            if(activeMinigame != minigames[rng]) {
+                this.sameGameCounter = 0;
+            } else {
+                this.sameGameCounter++;  
+            }
+            if(this.sameGameCounter >= 2) {
+                rng++;
+                rng = rng % minigames.Count;     
+            }
             activeMinigame = minigames[rng];
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "MiniGame set on: " + activeMinigame.GetName()));
         }

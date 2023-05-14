@@ -172,7 +172,7 @@ namespace Game
                     if (jumpBounce)
                     {
                         // zpetny odraz od prekazky (pustupny)
-                        rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f / 100, ForceMode.Force);
+                        rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f / 40, ForceMode.Force);
                     }
                     else
                     {
