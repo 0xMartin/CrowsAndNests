@@ -194,6 +194,10 @@ namespace Game.MiniGameUtils
 
             // deaktivuje/skryje hnizdo
             GameObject nest = Nests[id];
+            if(!nest.activeSelf) {
+                return;
+            }
+
             nest.SetActive(false);
 
             // zobrazi efekt skryti hnizda
@@ -219,6 +223,10 @@ namespace Game.MiniGameUtils
 
             // znovu aktivuje hnizdo
             GameObject nest = Nests[id];
+            if(nest.activeSelf) {
+                return;
+            }
+
             nest.SetActive(true);
 
             // zobrazi efekt zobrazeni hnizda

@@ -55,6 +55,8 @@ namespace Game.MiniGame
         };
         private List<List<EggColor>> combinations; /** Seznam vsech kombinaci */
 
+        private int targetCombination; /** Hledana kombinace, kombinace kterou hrac musi najit */
+
         private List<bool> showGroups; /** Zobrazovane skupiny vajec */
         private int showGroupCounter; /** Citac pro rizeni zobrazovani skupin */
 
@@ -62,12 +64,19 @@ namespace Game.MiniGame
 
         private List<GameObject> eggs; /** Seznam game objectu vajec aktualne spawnutych ve hre */
 
-        private float startTime;
+        private float startTime; /** Prommena pro casovani stavu hry */
 
         public override bool EndGame()
         {
             // odstraneni predchozich kombinaci vejci ze sceny
             ClearAllEggs();
+
+            // pokud hrac zije
+            if(this.cntx.LocalPlayer.Lives >= 0) {
+                // globalni skore +30
+                this.cntx.LocalPlayer.Score += 30f;
+                return true;
+            }
 
             return false;
         }
@@ -133,15 +142,15 @@ namespace Game.MiniGame
                         // zobrazeni skupiny
                         ShowEggGroup(this.showGroupCounter % 2 == 0);
 
-                        // inkrementace group counteru
-                        this.showGroupCounter++;
-
                         // konec zobrazovani
                         if(this.showGroupCounter >= this.SHOW_COUNT * 2) {
                              ClearAllEggs();
                             this.state = State.Wait;
                             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Wait time ..."));
                         }
+
+                        // inkrementace group counteru
+                        this.showGroupCounter++;
                     }
 
                     this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Show");
@@ -149,21 +158,75 @@ namespace Game.MiniGame
 
                 case State.Wait:
                     this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Wait");
+
+                    if (GameGlobal.Util.TimePassed(startTime, TIME_FOR_REMEMBER)) {
+                        // nahodne vybere jednu z kombinaci
+                        this.targetCombination = Random.Range(0, this.combinations.Count);
+
+                        // zobrazi hledanou kombinaci jako obrazek
+                        this.GenerateAndShowCombination(this.combinations[this.targetCombination]);
+
+                        // prechod do dalsiho stavu
+                        startTime = GameGlobal.Util.TimeStart();   
+                        this.state = State.Finding; 
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Finding time ..."));
+                    }
                     break;
 
                 case State.Finding:
-                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Finding time ..."));
                     this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Find");
+
+                    if (GameGlobal.Util.TimePassed(startTime, TIME_FOR_FINDING)) 
+                    {
+                        // skryje obrazek
+                        this.cntx.ShowImage(null);
+
+                        // odstrani hnizda  
+                        HideNests();
+
+                        // prechod do dalsiho stavu
+                        startTime = GameGlobal.Util.TimeStart();   
+                        this.state = State.Remove; 
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Remove incorrect nests ..."));
+                    }
                     break;
 
                 case State.Remove:
-                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Remove incorrect nests ..."));
                     this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Final");
+
+                    if (GameGlobal.Util.TimePassed(startTime, TIME_FOR_FINAL)) 
+                    {
+                        this.state = State.Reset; 
+                    }
                     break;
 
                 case State.Reset:
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Reset mini game ..."));
+                    startTime = GameGlobal.Util.TimeStart(); 
+                    this.state = State.Generate;
+                    
+                    // clear eggs
+                    this.ClearAllEggs();
+
+                    // zobrazi zpet vsechna hnizda
+                    for(int id = 0; id < this.cntx.Nests.Length; ++id) 
+                    {
+                        this.cntx.ShowNest(id);
+                    }
+                    
                     break;
+            }
+
+            // drop down
+            foreach(Player p in base.cntx.Players) 
+            {
+                if(base.cntx.IsPlayerDropDown(p)) 
+                {
+                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "KILLED: " + p.ToString()));
+                    base.cntx.KillPlayer(p);
+                    base.cntx.RandomSpawnPlayer(p);
+                    base.cntx.ClearUsedNestsStatus();    
+                }    
             }
         }
 
@@ -171,14 +234,15 @@ namespace Game.MiniGame
         /// Vygeneruje kombinace vajec
         /// </summary>
         /// <param name="combCount">Pozadovany pocet generovanych kombinaci (pokud to neni mozne tak jich vygeneruje min)</param>
-        /// <param name="eggCount">Pocet vajec v kombinacich</param>
+        /// <param name="eggCount">Maximalni pocet vajec v kombinacich</param>
         private void GenerateComb(int combCount, int eggCount) {
             this.combinations = new List<List<EggColor>>();
 
             for (int i = 0; i < 200 && this.combinations.Count < combCount; ++i)
             {
                 var colors = new List<EggColor>();
-                while (colors.Count < eggCount)
+                int rngEggCount = Random.Range(1, eggCount + 1);
+                while (colors.Count < rngEggCount)
                 {
                     var color = (EggColor)Random.Range(0, 6);
                     colors.Add(color);
@@ -264,7 +328,7 @@ namespace Game.MiniGame
 
             // nahradi vsechny volne index nahodnym cislem kombinace
             for(int i = 0; i < 100 && freeIndexList.Count > 0; ++i) {
-                for (int comb_id = 0; comb_id < Mathf.Min(this.combinations.Count, length); comb_id++) {
+                for (int comb_id = 0; comb_id < Mathf.Min(this.combinations.Count, length) && freeIndexList.Count > 0; comb_id++) {
                     int j = Random.Range(0, freeIndexList.Count);
                     this.combMap[freeIndexList[j]] = comb_id; // id kombinace zapise do mapy kombinace na nahodny index
                     freeIndexList.RemoveAt(j);
@@ -298,10 +362,19 @@ namespace Game.MiniGame
                             SpawnEgg(comb[0], nest, new Vector3(0.0f, 0.32f, 0.0f));
                             break;
                         case 2:
+                            SpawnEgg(comb[0], nest, new Vector3(0.4f, 0.32f, 0.0f));
+                            SpawnEgg(comb[1], nest, new Vector3(-0.4f, 0.32f, 0.0f));
                             break;
                         case 3:
+                            SpawnEgg(comb[0], nest, new Vector3(0.4f, 0.32f, 0.4f));
+                            SpawnEgg(comb[1], nest, new Vector3(-0.4f, 0.32f, 0.4f));
+                            SpawnEgg(comb[2], nest, new Vector3(0.0f, 0.32f, -0.4f));
                             break;
                         case 4:
+                            SpawnEgg(comb[0], nest, new Vector3(0.4f, 0.32f, 0.4f));
+                            SpawnEgg(comb[1], nest, new Vector3(-0.4f, 0.32f, 0.4f));
+                            SpawnEgg(comb[2], nest, new Vector3(0.4f, 0.32f, -0.4f));
+                            SpawnEgg(comb[3], nest, new Vector3(-0.4f, 0.32f, -0.4f));
                             break;
                     }
                 }
@@ -350,6 +423,130 @@ namespace Game.MiniGame
             foreach(GameObject obj in this.eggs) {
                 Destroy(obj);
             }
+        }
+
+        /// <summary>
+        /// Vygeneruju 2D obrazek podle kombinace barev vajec a zobrazi ho
+        /// </summary>
+        /// <param name="combination">Kombinace barev</param>
+        private void GenerateAndShowCombination(List<EggColor> combination) {
+            int w = 250;
+            int h = 250;
+
+            Texture2D image = RawImageDrawer.CreateTexture(w, h, new Color(0.3f, 0.3f, 0.5f, 0.5f));
+            Color c;
+            switch(combination.Count) {
+                case 1:
+                    c = EggColorToColor(combination[0]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w/2, h/2), 
+                        w * 0.5f * 0.78f, w * 0.5f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+                    break;
+
+                case 2:
+                    c = EggColorToColor(combination[0]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.3f, h/2), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+
+                    c = EggColorToColor(combination[1]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.7f, h/2), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+                    break;
+
+                case 3:
+                    c = EggColorToColor(combination[2]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w/2, h * 0.65f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+
+                    c = EggColorToColor(combination[0]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.3f, h * 0.4f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+
+                    c = EggColorToColor(combination[1]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.7f, h * 0.4f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+                    break;
+
+                case 4:
+                    c = EggColorToColor(combination[2]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.3f, h * 0.65f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+
+                    c = EggColorToColor(combination[3]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.7f, h * 0.65f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+
+                    c = EggColorToColor(combination[0]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.3f, h * 0.4f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+
+                    c = EggColorToColor(combination[1]);
+                    RawImageDrawer.DrawEllipse(
+                        image, 
+                        new Vector2(w * 0.7f, h * 0.4f), 
+                        w * 0.4f * 0.78f, w * 0.4f, 
+                        c, RawImageDrawer.Darker(c, 0.6f));
+                    break;
+            }
+
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), $"Showing image [{w}, {h}] for {combination.Count} egg"));
+            this.cntx.ShowImage(image);
+        }
+
+        private Color EggColorToColor(EggColor color) {
+            switch(color) {
+                case EggColor.White:
+                    return Color.white;
+                case EggColor.Blue:
+                    return Color.blue;
+                case EggColor.Green:
+                    return Color.green;
+                case EggColor.Magenta:
+                    return Color.magenta;
+                case EggColor.Red:
+                    return Color.red;
+                case EggColor.Yellow:
+                    return Color.yellow;
+            }
+            return Color.black;
+        }
+
+        /// <summary>
+        /// Skryje vsechna hnizda ktere jsou v neplatnych skupin, zustanou zobrazene jen ty hnizda na kterych byli hledane kombinace vajec
+        /// </summary>
+        private void HideNests() {
+            for(int nest_id = 0; nest_id < this.cntx.Nests.Length; ++nest_id) {
+                if(this.combMap[nest_id] != this.targetCombination) {
+                    // hnizdo bude skryte pokud nenalezi target kombinaci
+                    this.cntx.HideNest(nest_id);
+                }
+            }    
         }
 
     }

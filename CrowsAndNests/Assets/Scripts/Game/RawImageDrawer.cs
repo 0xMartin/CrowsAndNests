@@ -27,9 +27,8 @@ namespace Game
         /// <param name="width">Sirka v pixelech</param>
         /// <param name="height">Vyska v pixelech</param>
         /// <param name="color">Barva pozadi</param>
-        /// <param name="transparentBackground">Transparentnost pozadni</param>
         /// <returns>Vygenerovana 2D Textura</returns>
-        public static Texture2D CreateTexture(int width, int height, Color color, bool transparentBackground = false)
+        public static Texture2D CreateTexture(int width, int height, Color color)
         {
             Texture2D texture = new Texture2D(width, height);
 
@@ -39,27 +38,10 @@ namespace Game
                 pixels[i] = color;
             }
             texture.SetPixels(pixels);
-
-            if (transparentBackground)
-            {
-                Color transparentColor = new Color(0f, 0f, 0f, 0f);
-                for (int i = 0; i < width; i++)
-                {
-                    texture.SetPixel(i, 0, transparentColor);
-                    texture.SetPixel(i, height - 1, transparentColor);
-                }
-                for (int i = 0; i < height; i++)
-                {
-                    texture.SetPixel(0, i, transparentColor);
-                    texture.SetPixel(width - 1, i, transparentColor);
-                }
-            }
-
-            texture.Apply();
+            texture.Apply(true);
 
             return texture;
         }
-
 
         /// <summary>
         /// Vykresli elipsu
@@ -68,8 +50,10 @@ namespace Game
         /// <param name="position">Pozice elipsy</param>
         /// <param name="width">Sirka elipsy</param>
         /// <param name="height">Vyska elipsy</param>
-        /// <param name="color">Barva elipsy</param>
-        public static void DrawEllipse(Texture2D  texture, Vector2 position, float width, float height, Color color)
+        /// <param name="colorTop">Barva v horni casti</param>
+        /// <param name="colorBottom">Barva ve spodni casti</param>
+        public static void DrawEllipse(Texture2D  texture, Vector2 position, 
+                                       float width, float height, Color colorTop, Color colorBottom)
         {
             if (texture == null)
             {
@@ -98,12 +82,12 @@ namespace Game
                     float dy = (float)(y - centerY) / (height / 2f);
                     if (dx * dx + dy * dy <= 1f)
                     {
-                        texture.SetPixel(x, y, color);
+                        texture.SetPixel(x, y, Gradient(colorBottom, minY, colorTop, maxY, y));
                     }
                 }
             }
 
-            texture.Apply();
+            texture.Apply(true);
         }
 
         /// <summary>
@@ -126,7 +110,37 @@ namespace Game
             }
 
             texture.SetPixels(x, y, width, height, colors);
-            texture.Apply();
+            texture.Apply(true);
+        }
+
+        /// <summary>
+        /// Navrati tmavejsi barvu
+        /// </summary>
+        /// <param name="c">Puvodni barva</param>
+        /// <param name="factor">Faktor ztmaveni barvy</param>
+        /// <returns></returns>
+        public static Color Darker(Color color, float factor) {
+            return Color.Lerp(color, Color.black, factor);
+        }
+
+        /// <summary>
+        /// Vypocita barvu pixelu v 1D gradientu
+        /// </summary>
+        /// <param name="start">Pocatecni barva</param>
+        /// <param name="x_start">Pozice pocatecni barvy</param>
+        /// <param name="end">Koncova barva</param>
+        /// <param name="x_end">Pozice koncove barvy</param>
+        /// <param name="x">Pozadovany pixel</param>
+        /// <returns>Vysledna barva pixelu v gradientu</returns>
+        public static Color Gradient(Color start, float x_start, Color end, float x_end, float x) {
+            if (x <= x_start) {
+                return start;
+            } else if (x >= x_end) {
+                return end;
+            } else {
+                float t = (x - x_start) / (x_end - x_start);
+                return Color.Lerp(start, end, t);
+            }
         }
 
     }

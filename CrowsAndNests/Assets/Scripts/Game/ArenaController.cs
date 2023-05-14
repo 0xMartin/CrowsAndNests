@@ -69,7 +69,7 @@ namespace Game
         public GameObject playerScoreObj;
         public GameObject gameNameObj;
         public GameObject timeObj;
-        public GameObject centerImageObj;
+        public GameObject imageDisplayObj;
 
         [Header("MiniGames")]
         public List<GameObject> gamesList;
@@ -106,7 +106,7 @@ namespace Game
         private TextMeshProUGUI playerScoreText;    /** Text poctem skore hrace */
         private TextMeshProUGUI gameNameText;       /** Text s nazvem aktualni minihry */
         private TextMeshProUGUI timeText;           /** Text s aktualni zbyvajicim casem do konce minihry */
-        private RawImage centerImage;               /** Objekt pro zobrazovani libovolniych obrazku */
+        private RawImage imageDisplay;               /** Objekt pro zobrazovani libovolniych obrazku */
 
         void Start()
         {
@@ -120,8 +120,8 @@ namespace Game
 
             this.timeText = this.timeObj.GetComponent<TextMeshProUGUI>();
             this.TimeCallBack("");
-            this.centerImage = this.centerImageObj.GetComponent<RawImage>();
-            this.centerImage.enabled = false;
+            this.imageDisplay = this.imageDisplayObj.GetComponent<RawImage>();
+            this.imageDisplayObj.SetActive(false);
         }
 
         void Awake() {
@@ -461,10 +461,10 @@ namespace Game
         /// <param name="image">2D Texture / obrazek ktery ma byt zobrazen</param>
         private void ImageCallback(Texture2D image) {
             if(image == null) {
-                this.centerImage.enabled = false;
+                this.imageDisplayObj.SetActive(false);
             } else {
-                this.centerImage.enabled = true;
-                this.centerImage.texture = image;
+                this.imageDisplayObj.SetActive(true);
+                RawImageDrawer.DrawTexture(this.imageDisplay, image);
             }
         }
 
