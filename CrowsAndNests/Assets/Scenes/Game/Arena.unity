@@ -223,7 +223,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124609296}
-  m_LocalRotation: {x: 0.28978413, y: 0.00000001646809, z: -0.000000004986136, w: 0.95709205}
+  m_LocalRotation: {x: 0.28978413, y: -0.000000016468093, z: 0.0000000049861373, w: 0.95709205}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4052,12 +4052,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe7de72f82148841851110ff7896fac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ROUND_COUNT: 1
-  SHOW_COUNT: 1
+  ROUND_COUNT: 3
+  SHOW_COUNT: 3
   INCREMENT_EGG_PER: 4
   INCREMENT_COMB_PER: 2
   TIME_FOR_FINDING: 10
-  TIME_FOR_SHOW: 3
+  TIME_FOR_SHOW: 2
   TIME_FOR_REMEMBER: 5
   TIME_FOR_FINAL: 5
   classicEgg: {fileID: 7957718450983970825, guid: ded3167fe43491346a5fc25b3101d592, type: 3}
@@ -4310,10 +4310,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe6e14e39f5b4324082da05182969c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GAME_START_TIME: 1
+  GAME_START_TIME: 15
   GAME_END_TIME: 10
-  MINIGAME_NAME_TIME: 1
-  MINIGAME_START_TIME: 2
+  MINIGAME_NAME_TIME: 3
+  MINIGAME_START_TIME: 4
   MINIGAME_END_TIME: 5
   MAX_PLAYERS: 4
   MIN_PLAYERS: 1
@@ -4343,8 +4343,8 @@ MonoBehaviour:
   - {fileID: 1129866914}
   - {fileID: 34346395}
   spectator: {fileID: 1250303058}
-  nestHideFxPrefab: {fileID: 0}
-  nestShowFxPrefab: {fileID: 0}
+  nestHideFxPrefab: {fileID: 4627351508139902362, guid: a524fe2a930d9254bbee25eb011b3fe6, type: 3}
+  nestShowFxPrefab: {fileID: 8926535344488595212, guid: 4b7dcc302d4b194469b8ab5d94aa336c, type: 3}
   countdownObj: {fileID: 260122661}
   playerLiveObj: {fileID: 1021018088}
   playerScoreObj: {fileID: 1163238680}
@@ -4352,6 +4352,7 @@ MonoBehaviour:
   timeObj: {fileID: 1682629578}
   imageDisplayObj: {fileID: 138828221}
   gamesList:
+  - {fileID: 910121962}
   - {fileID: 1252476395}
 --- !u!1001 &1412305037
 PrefabInstance:
@@ -7247,8 +7248,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.3211034, g: 0, b: 0.5566038, a: 0.101960786}
-        key1: {r: 1, g: 0.104290456, b: 0, a: 0.39607844}
+        key0: {r: 0.21060874, g: 0.22270362, b: 0.4811321, a: 0.101960786}
+        key1: {r: 0.39607844, g: 0.12941177, b: 0.33003435, a: 0.39607844}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -11560,6 +11561,10 @@ PrefabInstance:
     - target: {fileID: 796821778674731379, guid: 51b4aff5606351f4a9904ea3f8b8f8aa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 796821778674731380, guid: 51b4aff5606351f4a9904ea3f8b8f8aa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51b4aff5606351f4a9904ea3f8b8f8aa, type: 3}

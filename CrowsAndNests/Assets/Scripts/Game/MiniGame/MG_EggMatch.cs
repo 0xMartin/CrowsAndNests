@@ -118,6 +118,15 @@ namespace Game.MiniGame
                 case State.Generate:
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Generating ..."));
 
+                    // respawn vsech mrtvich hracu
+                    foreach(Player p in base.cntx.Players) 
+                    {
+                        if(!p.IsLiving) {
+                            base.cntx.RandomSpawnPlayer(p);
+                            base.cntx.ClearUsedNestsStatus(); 
+                        }
+                    }
+
                     // dalsi kolo
                     this.current_round += 1;
 
@@ -217,16 +226,16 @@ namespace Game.MiniGame
                     break;
             }
 
-            // drop down
             foreach(Player p in base.cntx.Players) 
             {
+                // drop down -> kill
                 if(base.cntx.IsPlayerDropDown(p)) 
                 {
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "KILLED: " + p.ToString()));
-                    base.cntx.KillPlayer(p);
-                    base.cntx.RandomSpawnPlayer(p);
-                    base.cntx.ClearUsedNestsStatus();    
+                    base.cntx.KillPlayer(p);   
                 }    
+
+                // respawn jen pri startu
             }
         }
 

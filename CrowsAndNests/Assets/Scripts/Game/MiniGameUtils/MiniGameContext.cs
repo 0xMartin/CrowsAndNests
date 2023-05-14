@@ -81,6 +81,9 @@ namespace Game.MiniGameUtils
             {
                 return;
             }
+
+            player.IsLiving = true;
+
             // pokud z nejakeho duvodu hrac nema model nebo jiz neni volny spawn
             if (player.ModelRef == null || UsedSpawns.Count >= Spawns.Length)
             {
@@ -135,9 +138,7 @@ namespace Game.MiniGameUtils
                 return;
             }
             player.Lives = Mathf.Max(-1, player.Lives - 1);
-            if(player.Lives < 0) {
-                player.IsLiving = false;
-            }
+            player.IsLiving = false;
 
             // deaktivuje hraci jeho model ze hry
             if (player.ModelRef != null)

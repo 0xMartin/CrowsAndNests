@@ -154,7 +154,7 @@ namespace Game
             this.gameCntx.LocalPlayer = new Player() {
                     Name = "You",
                     Score = 0,
-                    Lives = 0,
+                    Lives = 3,
                     IsLiving = true,
                     ModelRef = this.playerRef,
                     CinemachineFreeLook = this.cinemachineCam 

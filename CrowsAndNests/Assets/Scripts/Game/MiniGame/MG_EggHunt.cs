@@ -127,14 +127,16 @@ namespace Game.MiniGame
                 // nahodne vygeneruje pozici (takove hnizdo ktere je volne a zaroven nejde o hnizdo na ktere bylo vejce rozbito naposled)
                 do {
                     id = (int) UnityEngine.Random.Range(0, this.cntx.Nests.Length);
-                } while((this.eggMap.Values.Contains(id) || this.lastBreakID == id) && j++ < 100);
+                } while((this.eggMap.Values.Contains(id) || this.lastBreakID == id || id % 4 == 0) && j++ < 100);
 
                 if(id >= 0) {
                     // vytvori instanci noveho vejce a jako parent object mu priradi hnizdo
                     GameObject newEgg = Instantiate(this.breakableEgg);
                     this.toRemove.Add(newEgg);
                     newEgg.transform.parent = this.cntx.Nests[id].transform;
-                    newEgg.transform.localPosition = new Vector3(0.0f, 0.32f, 0.0f);
+                    float x = Random.Range(0.2f, 0.8f);
+                    float y = Random.Range(0.2f, 0.8f);
+                    newEgg.transform.localPosition = new Vector3(x, 0.32f, y);
 
                     // prida zaznam do egg mapy (pri rozbiti vejce bude hned odebran) a nastavi callback na rozbiti
                     BreakableEgg bec = newEgg.GetComponentInChildren<BreakableEgg>();
