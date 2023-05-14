@@ -15,11 +15,12 @@ namespace Game.MiniGame
 
         /************************************************************************************************************************/
         [Header("Config")]
-        public int ROUND_COUNT = 3;          /** Pocet kol */
+        public int ROUND_COUNT = 3;         /** Pocet kol */
         public int SHOW_COUNT = 3;          /** Kolikrat bude ukazana kazda skupina kombinaci */
-        public int INCREPENT_EGG_PER = 4;   /** Po kolika kolech ma inkrementovat pocet generovanych vajec na jedno hnizdo */
+        public int INCREMENT_EGG_PER = 4;   /** Po kolika kolech ma inkrementovat pocet generovanych vajec na jedno hnizdo */
         public int INCREMENT_COMB_PER = 2;  /** Po kolika kolech ma inkrementovat pocet kombinaci */
         public int TIME_FOR_FINDING = 10;   /** Cas na hledani spravneho hnizda [sec] */
+        public int TIME_FOR_SHOW = 3;       /** Cas na zobrazeni jedne skupiny [sec] */
         public int TIME_FOR_REMEMBER = 5;   /** Cas na zapamatovani [sec] */
         public int TIME_FOR_FINAL = 5;      /** Cas cekani ve finalni fazi [sec] */
 
@@ -54,7 +55,14 @@ namespace Game.MiniGame
         };
         private List<List<EggColor>> combinations; /** Seznam vsech kombinaci */
 
-        private List<GameObject> eggs; /** Seznam game objectu vajec spawnutych ve hre */
+        private List<bool> showGroups; /** Zobrazovane skupiny vajec */
+        private int showGroupCounter; /** Citac pro rizeni zobrazovani skupin */
+
+        private List<int> combMap; /** Map kombinaci obsahujici informace o tom na jakem hnizde se nachazi jaka kombinace */
+
+        private List<GameObject> eggs; /** Seznam game objectu vajec aktualne spawnutych ve hre */
+
+        private float startTime;
 
         public override bool EndGame()
         {
@@ -78,42 +86,59 @@ namespace Game.MiniGame
             this.current_round = 0;
             this.eggs = new List<GameObject>();
             this.combinations = new List<List<EggColor>>();
+            this.showGroups = new List<bool>();
+            this.combMap = new List<int>();
         }
 
         public override void RunGame()
         {
             this.state = State.Generate;
+            this.comb_count = 2 + (int) Mathf.Floor(this.cntx.GameStats.GameCount / this.INCREMENT_COMB_PER);
+            this.comb_count = this.comb_count > 16 ? 16 : this.comb_count;
+            this.egg_count = 1 + (int) Mathf.Floor(this.cntx.GameStats.GameCount / this.INCREMENT_EGG_PER);
+            this.egg_count = this.egg_count > 4 ? 4 : this.egg_count;
         }
 
         public override void UpdateGame()
         {
-            // time info label refresh
-            this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "00:00");
-            
             // hlavni logika
             switch(this.state) {
                 case State.Generate:
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Combination Generating ..."));
 
+                    // dalsi kolo
                     this.current_round += 1;
+
+                    // vygeneruje kombinace
                     this.GenerateComb(this.comb_count, this.egg_count);
+
+                    // vygeneruje zobrazovaci masku
+                    this.GenerateGroupMask();
+
+                    // vygeneruje mapu kombinaci 
+                    this.GenerateCombinationMap();
+
                     this.state = State.Show;
-
-                    foreach(List<EggColor> comb in this.combinations) {
-                        string str = "";
-                        foreach(EggColor c in comb)
-                            str += c.ToString() + ", ";
-                        Debug.Log("-> " + str);
-                    }
-
+                    startTime = GameGlobal.Util.TimeStart();
                     break;
 
                 case State.Show:
-                    //Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Show combination ..."));
+                    if (GameGlobal.Util.TimePassed(startTime, TIME_FOR_SHOW)) {
+                        Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), $"Show combination [{this.showGroupCounter}] ..."));
+
+                        // zobrazeni skupiny
+                        ShowEggGroup(this.showGroupCounter % 2 == 0);
+
+                        // konec zobrazovani
+                        if(this.showGroupCounter >= this.SHOW_COUNT * 2) {
+                            this.state = State.Wait;
+                            startTime = GameGlobal.Util.TimeStart();       
+                        }
+                    }
                     break;
 
                 case State.Wait:
-                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Wait time ..."));
+                    //Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Wait time ..."));
                     break;
 
                 case State.Finding:
@@ -128,6 +153,9 @@ namespace Game.MiniGame
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Reset mini game ..."));
                     break;
             }
+
+            // time info label refresh
+            this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "00:00");
         }
 
         /// <summary>
@@ -181,6 +209,92 @@ namespace Game.MiniGame
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Vygeneruje masky pro 2 skupin (pri ukozavani se zobrazuje vzdy jen jedna ze skupin)
+        /// </summary>
+        /// <param name="groups">Pocet skupin</param>
+        private void GenerateGroupMask() {
+            // resetuje citac 
+            this.showGroupCounter = 0;
+
+            // vygeneruje list (true ... | false ...)
+            this.showGroups = new List<bool>();
+            int perGroup = this.cntx.Nests.Length / 2;
+            for(int i = 0; i < this.cntx.Nests.Length; ++i) {
+                this.showGroups.Add(i < perGroup);    
+            }
+
+            // Náhodně promíchat prvky v listu
+            int count = this.showGroups.Count;
+            while (count > 1) {
+                count--;
+                int index = Random.Range(0, count + 1);
+                bool temp = this.showGroups[index];
+                this.showGroups[index] = this.showGroups[count];
+                this.showGroups[count] = temp;
+            }       
+
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Show group mask generated"));
+        }
+
+        /// <summary>
+        /// Vygeneruje mapu kombinaci
+        /// </summary>
+        private void GenerateCombinationMap() {
+            this.combMap = new List<int>();
+            int length = this.cntx.Nests.Length;
+
+            // naplni list volnymi indexy
+            List<int> freeIndexList = new List<int>();
+            for(int i = 0; i < length; ++i) {
+                freeIndexList.Add(i);    
+            }
+
+            // nahradi vsechny volne index nahodnym cislem kombinace
+            while(freeIndexList.Count > 0) {
+                for (int comb_id = 0; comb_id < Mathf.Min(this.combinations.Count, length); comb_id++) {
+                    int j = Random.Range(0, freeIndexList.Count);
+                    this.combMap[freeIndexList[j]] = comb_id; // id kombinace zapise do mapy kombinace na nahodny index
+                    freeIndexList.Remove(j);
+                }
+            }
+
+            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Combination map generated"));
+        }
+
+        /// <summary>
+        /// Zobrazi/spawne skupinu vajce (prvni/druhy)
+        /// </summary>
+        /// <param name="group">Selektor skupiny</param>
+        private void ShowEggGroup(bool group) {
+            int length = this.cntx.Nests.Length;
+
+            // odstraneni predchozich kombinaci ze sceny
+            foreach(GameObject obj in this.eggs) {
+                Destroy(obj);
+            }
+
+            // zobrazeni kombinaci dane skupiny 
+            for(int i = 0; i < length; ++i) {
+                if(this.showGroups[i] == group) {
+                    // kombinace na pozici "i"
+                    List<EggColor> comb = this.combinations[i];
+
+                    // vytvoreni instance kombinace
+                    switch(comb.Count) {
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+                    }
+                }
+            }
         }
 
     }
