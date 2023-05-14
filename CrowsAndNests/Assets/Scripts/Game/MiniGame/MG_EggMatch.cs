@@ -41,7 +41,7 @@ namespace Game.MiniGame
         private int egg_count;      /** aktualni pocet vajec */
 
         private enum State {
-            Generate,   /** vygenerovani kombinaci + text "Dalsi kolo" */
+            Generate,   /** vygenerovani kombinaci, masky skupin a kombinacni mapy + text "Dalsi kolo" */
             Show,       /** zobrazovani kombinaci (stridani 2 skupin - 3x 1., 3x 2.) */
             Wait,       /** cekani (definovany cas) */
             Finding,    /** zobrazeni hledaneho obrazku + cekani */
@@ -66,6 +66,9 @@ namespace Game.MiniGame
 
         public override bool EndGame()
         {
+            // odstraneni predchozich kombinaci vejci ze sceny
+            ClearAllEggs();
+
             return false;
         }
 
@@ -104,7 +107,7 @@ namespace Game.MiniGame
             // hlavni logika
             switch(this.state) {
                 case State.Generate:
-                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Combination Generating ..."));
+                    Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Generating ..."));
 
                     // dalsi kolo
                     this.current_round += 1;
@@ -124,38 +127,44 @@ namespace Game.MiniGame
 
                 case State.Show:
                     if (GameGlobal.Util.TimePassed(startTime, TIME_FOR_SHOW)) {
+                        startTime = GameGlobal.Util.TimeStart();  
                         Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), $"Show combination [{this.showGroupCounter}] ..."));
 
                         // zobrazeni skupiny
                         ShowEggGroup(this.showGroupCounter % 2 == 0);
 
+                        // inkrementace group counteru
+                        this.showGroupCounter++;
+
                         // konec zobrazovani
                         if(this.showGroupCounter >= this.SHOW_COUNT * 2) {
+                             ClearAllEggs();
                             this.state = State.Wait;
-                            startTime = GameGlobal.Util.TimeStart();       
+                            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Wait time ..."));
                         }
                     }
+
+                    this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Show");
                     break;
 
                 case State.Wait:
-                    //Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Wait time ..."));
+                    this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Wait");
                     break;
 
                 case State.Finding:
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Finding time ..."));
+                    this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Find");
                     break;
 
                 case State.Remove:
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Remove incorrect nests ..."));
+                    this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "Final");
                     break;
 
                 case State.Reset:
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggMatch), "Reset mini game ..."));
                     break;
             }
-
-            // time info label refresh
-            this.cntx.showTime(this.current_round.ToString() + "/" + this.ROUND_COUNT.ToString() + "<br>" + "00:00");
         }
 
         /// <summary>
@@ -250,14 +259,15 @@ namespace Game.MiniGame
             List<int> freeIndexList = new List<int>();
             for(int i = 0; i < length; ++i) {
                 freeIndexList.Add(i);    
+                this.combMap.Add(-1);
             }
 
             // nahradi vsechny volne index nahodnym cislem kombinace
-            while(freeIndexList.Count > 0) {
+            for(int i = 0; i < 100 && freeIndexList.Count > 0; ++i) {
                 for (int comb_id = 0; comb_id < Mathf.Min(this.combinations.Count, length); comb_id++) {
                     int j = Random.Range(0, freeIndexList.Count);
                     this.combMap[freeIndexList[j]] = comb_id; // id kombinace zapise do mapy kombinace na nahodny index
-                    freeIndexList.Remove(j);
+                    freeIndexList.RemoveAt(j);
                 }
             }
 
@@ -271,20 +281,21 @@ namespace Game.MiniGame
         private void ShowEggGroup(bool group) {
             int length = this.cntx.Nests.Length;
 
-            // odstraneni predchozich kombinaci ze sceny
-            foreach(GameObject obj in this.eggs) {
-                Destroy(obj);
-            }
+            // odstraneni predchozich kombinaci vejci ze sceny
+            ClearAllEggs();
 
             // zobrazeni kombinaci dane skupiny 
             for(int i = 0; i < length; ++i) {
                 if(this.showGroups[i] == group) {
-                    // kombinace na pozici "i"
-                    List<EggColor> comb = this.combinations[i];
+                    // hnizdo na pozici "i" parrent
+                    GameObject nest = this.cntx.Nests[i];
+                    // kombinace na pozici "i" -> id kombinace ziska s vygenerovane kombinacni mapy
+                    List<EggColor> comb = this.combinations[this.combMap[i]];
 
                     // vytvoreni instance kombinace
                     switch(comb.Count) {
                         case 1:
+                            SpawnEgg(comb[0], nest, new Vector3(0.0f, 0.32f, 0.0f));
                             break;
                         case 2:
                             break;
@@ -294,6 +305,50 @@ namespace Game.MiniGame
                             break;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Spawne vejce ve stene. Je mu prarazen rodic "hnizdo" a nastave mu material poble barvy "EggColor"
+        /// </summary>
+        /// <param name="color">Barva vejce</param>
+        /// <param name="parret">Parent object</param>
+        /// <param name="offset">Offset vejce</param>
+        private void SpawnEgg(EggColor color, GameObject parret, Vector3 offset) {
+            GameObject newEgg = Instantiate(this.classicEgg);
+            Renderer renderer = newEgg.GetComponent<Renderer>();
+            switch(color) {
+                case EggColor.White:
+                    renderer.material = whiteColor;
+                    break;
+                case EggColor.Blue:
+                    renderer.material = blueColor;
+                    break;
+                case EggColor.Green:
+                    renderer.material = greenColor;
+                    break;
+                case EggColor.Magenta:
+                    renderer.material = magentaColor;
+                    break;
+                case EggColor.Red:
+                    renderer.material = redColor;
+                    break;
+                case EggColor.Yellow:
+                    renderer.material = yellowColor;
+                    break;
+            }
+
+            newEgg.transform.parent = parret.transform;
+            newEgg.transform.localPosition = offset;
+
+            // prida vejce do listu pro pozdejsi odebrani
+            this.eggs.Add(newEgg);
+        }
+
+        private void ClearAllEggs() {
+            // odstraneni predchozich kombinaci vejci ze sceny
+            foreach(GameObject obj in this.eggs) {
+                Destroy(obj);
             }
         }
 
