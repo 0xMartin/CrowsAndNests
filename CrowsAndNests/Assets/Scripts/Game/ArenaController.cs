@@ -71,6 +71,9 @@ namespace Game
         public GameObject timeObj;
         public GameObject imageDisplayObj;
 
+        [Header("Sounds")]
+        public GameObject tickSoundObj;  /** Zvuk odpoctu "tick" */
+
         [Header("MiniGames")]
         public List<GameObject> gamesList;
 
@@ -109,6 +112,7 @@ namespace Game
         private TextMeshProUGUI gameNameText;       /** Text s nazvem aktualni minihry */
         private TextMeshProUGUI timeText;           /** Text s aktualni zbyvajicim casem do konce minihry */
         private RawImage imageDisplay;               /** Objekt pro zobrazovani libovolniych obrazku */
+        private AudioSource tickSound;              /** Zvuk odpoctu*/
 
         void Start()
         {
@@ -124,9 +128,15 @@ namespace Game
             this.TimeCallBack("");
             this.imageDisplay = this.imageDisplayObj.GetComponent<RawImage>();
             this.imageDisplayObj.SetActive(false);
+
+            this.tickSound = this.tickSoundObj.GetComponent<AudioSource>();
         }
 
         void Awake() {
+            // skryje a uzamkne kurzor
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
             // defaultni stav hry
             this.state = GameState.NotRunning;
 
@@ -407,10 +417,18 @@ namespace Game
         /// <param name="number">Zobrazevane cislo "odpocet"</param>
         /// <param name="show">True -> cislo bude zobrazeno, false -> cislo bude skryto</param>
         /// <param name="zeroText">Text ktery ze zobrazi misto cisla 0 v odpoctu</param>
+        private int lastNum;
         private void ShowCountDown(int number, bool show, string zeroText)
         {
             // zobrazeni / skryti textu
             this.countdownText.enabled = show;
+
+            // prehraje zvuk pokud doje ke zmene predchoziho cisla
+            if(this.lastNum != number && number != 0) 
+            {
+                this.tickSound.Play();
+            }
+            this.lastNum = number;
 
             // zobrazeni cisla odpoctu / text misto 0
             if(number == 0) 

@@ -15,8 +15,11 @@ public class BreakableEgg : MonoBehaviour
     [Header("References")]
     public Transform playerTransform; /** pozice hrace */
     public ParticleSystem dustParticle; /** efekt rozbiti vejce */
+    public GameObject breakSoundObj; /** objekt se zvukem rozbitim vejce */
  
     private bool isBroken; /** stav zda je vejce uz rozbite*/
+
+    private AudioSource breakSound; /** zvuk s rozbitim vejce */
 
     // delegat pro rozbiti vejce
     public delegate void EggBreakAction(BreakableEgg egg); 
@@ -24,6 +27,8 @@ public class BreakableEgg : MonoBehaviour
 
     private void Start() {
         isBroken = false;
+
+        this.breakSound = this.breakSoundObj.GetComponent<AudioSource>();
 
         // daktivuje gravitaci pro casti vejce
         foreach(Transform t in transform) {
@@ -55,6 +60,9 @@ public class BreakableEgg : MonoBehaviour
     private void breaEgg1()
     {
         isBroken = true;
+
+        // zvuk
+        this.breakSound.Play();
 
         //dust fx
         if(dustParticle != null) {

@@ -40,6 +40,14 @@ namespace Game
         public ParticleSystem dustParticle; /** Dust particly ktere se aktivouji pri dopadu hrace na zem */
 
         /********************************************************************/
+        // zvuky
+        [Header("Sounds")]
+        public GameObject walkSoundObj; /** Zvuk chuze */
+        public GameObject hitSoundObj;  /** Zvuk utoku */
+        public GameObject jumpSoundObj; /** Zvuk skoku */
+
+
+        /********************************************************************/
         // lokalni promenne
         private Quaternion targetRotation; /** Pro plynulou rotaci hrace po smeru pohybu */
         private Vector3 direction; /** Aktualni smer pohybu */
@@ -52,17 +60,24 @@ namespace Game
         private bool inJump; /** True -> hrac prave skace */
         private Vector3 jumpDir; /** Smer skoku */
         private bool jumpBounce; /** True -> odraz od prekazky ve vzduchu, pri srazce z nejakym objektem */
-
         private bool inAttack; /** True -> hrace prave utoci */
-
         private bool grounded; /** True -> hrac je na zemi */
-        private bool grounded_last; /** Predchozi stav "grounded" */
+        private bool grounded_last; /** Predchozi stav "grounded */
+
+        private AudioSource walkSound;
+        private AudioSource hitSound;
+        private AudioSource jumpSound;
 
         /// <summary>
         /// Inicializace promennych
         /// </summary>
         private void Start()
         {
+            // nacte zvuky
+            this.walkSound = this.walkSoundObj.GetComponent<AudioSource>();
+            this.hitSound = this.hitSoundObj.GetComponent<AudioSource>();
+            this.jumpSound = this.jumpSoundObj.GetComponent<AudioSource>();
+
             // skryje a uzamkne kurzor
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -100,7 +115,7 @@ namespace Game
                 Jump();
             }
             // ovladani utoku
-            if (Input.GetMouseButtonDown(mouseButtonAttack))
+            if (Input.GetMouseButtonDown(mouseButtonAttack) && !inAttack)
             {
                 Attack();
             }
@@ -172,7 +187,7 @@ namespace Game
                     if (jumpBounce)
                     {
                         // zpetny odraz od prekazky (pustupny)
-                        rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f / 40, ForceMode.Force);
+                        rb.AddForce(-jumpDir * 0.2f * moveForce * airMultiplier * 10f / 10, ForceMode.Force);
                     }
                     else
                     {
@@ -191,6 +206,17 @@ namespace Game
 
             // animator (walking)
             animator.SetBool("isMoving", direction != Vector3.zero);
+
+            // zvuk pohybu
+            if(direction == Vector3.zero || inJump) {
+                if(this.walkSound.isPlaying) {
+                    this.walkSound.Stop();
+                }
+            } else {
+                if(!this.walkSound.isPlaying) {
+                    this.walkSound.Play();
+                }
+            }
 
             // otaceni modelu hrace ve smeru pohybu
             if (direction != Vector3.zero)
@@ -212,6 +238,7 @@ namespace Game
             // doslo ke kolizi z jim objektem -> pokud je hrac ve vzduchu obrati jeho vektor pohybu
             if (inJump)
             {
+                rb.AddForce(transform.up * 15, ForceMode.Impulse);
                 jumpBounce = true;
             }
             // pokud koliduje se zemi "inJump" = false -> muze skakat znovu
@@ -228,9 +255,11 @@ namespace Game
         {
             // animator (jumping)
             animator.SetBool("isJumping", true);
+
             // propt set
             inJump = true;
             jumpBounce = false;
+
             // impulse + reset
             if (verticalInput != 0.0 || horizontalInput != 0.0)
             {
@@ -242,6 +271,9 @@ namespace Game
             }
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+            // zvuk
+            this.jumpSound.Play();
         }
 
         /// <summary>
@@ -252,6 +284,9 @@ namespace Game
             // animator utok
             animator.SetBool("isAttacking", true);
             inAttack = true;
+
+            // zvuk
+            this.hitSound.Play();
         }
 
     }
