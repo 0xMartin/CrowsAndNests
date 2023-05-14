@@ -29,24 +29,24 @@
   - [ ] Vymodelovat lepe vypadajici vez z hodinama (aktualni verze: nic moc obarveni, nakvalitni tvary, malo komplexni, nejlepe pouziti textur ruznych materualu pro obarveni)
   - [ ] Dalsi dekorativni material do prostredi, kolem areny je zatim relativne prazdno, bylo by dobre prostor nejaky vhodnym zpusoben zaplnit
   - [ ] Animace pohypu palicek v ptacim hnizde
-- [ ] Herni postava
+- [X] Herni postava
   - [X] Pohybove animace
-  - [ ] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
+  - [X] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
   - [ ] Vytvorit skiny
-- [ ] Kamera
-  - [ ] Limity pohybu v ose Y (kamera se nesmi dostat pod mapu pokud hrac pada dolu)
+- [X] Kamera
+  - [X] Limity pohybu v ose Y (kamera se nesmi dostat pod mapu pokud hrac pada dolu)
   - [ ] Treseni kamery pri ruznych efektech
 - [ ] Design - ELISKA
-  - [ ] Vytvorit ikonu hry
+  - [X] Vytvorit ikonu hry
   - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
 - [ ] Menu - PAVEL
   - [ ] 3D scena v pozadi menu
-  - [ ] Styl tlacitek a textu
+  - [X] Styl tlacitek a textu
   - [ ] Settings menu
   - [X] Main menu
-  - [ ] Game settings menu
-  - [ ] Game lobby menu
-  - [ ] Connect to host menu
+  - [X] Game settings menu
+  - [X] Game lobby menu
+  - [X] Connect to host menu
 - [ ] Zvukove efekty - PAVEL
   - [ ] Menu - PAVEL
     - [ ] Zvuk stiknuti tlacika - PAVEL
@@ -77,22 +77,22 @@
   - [X] Pridani mlhy
   - [ ] Particly v prostredi
   - [X] Nocni scena
-  - [ ] Prizpusobyt osvetleni
+  - [X] Prizpusobyt osvetleni
   - [X] Skybox (noc/vesmir/...)
 - [X] Postprocessing 
   - [X] Vyladeni barev obrazu
-- [ ] Skript pro rizeni areny
+- [X] Skript pro rizeni areny
   - [X] Zakladni struktura
   - [X] Vstupy skriptu
   - [X] Hlavni herni smycka
   - [X] Respawn handler
   - [X] Spawn handler
   - [X] Manazer hernich modu
-  - [ ] Manazer skore
+  - [X] Manazer skore
   - [X] Cleaning manager
-- [ ] Mini Hry
-  - [ ] Fall guy Perfect match
-  - [ ] Bitva o vejce
+- [X] Mini Hry
+  - [X] Fall guy Perfect match
+  - [X] Bitva o vejce
   - [ ] Padajici predmety
   - [ ] ?? napady na dalsi hry
 
