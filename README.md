@@ -40,7 +40,7 @@
   - [X] Vytvorit ikonu hry
   - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
 - [ ] Menu - PAVEL
-  - [ ] 3D scena v pozadi menu
+  - [X] 3D scena v pozadi menu
   - [X] Styl tlacitek a textu
   - [ ] Settings menu
   - [X] Main menu
@@ -48,32 +48,31 @@
   - [X] Game lobby menu
   - [X] Connect to host menu
 - [ ] Zvukove efekty - PAVEL
-  - [ ] Menu - PAVEL
-    - [ ] Zvuk stiknuti tlacika - PAVEL
-    - [ ] Zvuk pripojeni do lobby hry - PAVEL
+  - [X] Menu - PAVEL
+    - [X] Zvuk stiknuti tlacika - PAVEL
     - [ ] Zvuk spusteni hry - PAVEL
-  - [ ] Vrana - PAVEL
-    - [ ] Chuze - PAVEL
-    - [ ] Vyskok - PAVEL
+  - [X] Vrana - PAVEL
+    - [X] Chuze - PAVEL
+    - [X] Vyskok - PAVEL
     - [ ] Dopad - PAVEL
-    - [ ] Utok - PAVEL
-  - [ ] Vejce - PAVEL
-    - [ ] Rozbiti - PAVEL
+    - [X] Utok - PAVEL
+  - [X] Vejce - PAVEL
+    - [X] Rozbiti - PAVEL
   - [ ] Hnizdo - PAVEL
     - [ ] Efekt zniceni "pokud hnizdno zmizi z areny / rozbije ho nejaka herni udalost" - PAVEL
   - [ ] Globalni - PAVEL
     - [ ] Zvuk vitezstvi- PAVEL
     - [ ] Zvuk porazky- PAVEL
     - [ ] Zvuk smrti "pokud vrana vypadne z areny"- PAVEL
-    - [ ] Odpocet "tick hodin"- PAVEL
-  - [ ] Soundtrack - 
+    - [X] Odpocet "tick hodin"- PAVEL
+  - [X] Soundtrack - 
     - [ ] Menu
     - [X] Arena - soundtrack1 
       - ? https://www.youtube.com/watch?v=FNZMAlO_gi4&list=PLlHY6e7WCV6NaJ5iNMoAWSEasT83GOaDo&index=5&ab_channel=GamesMusic
-    - [ ] Arena - soundtrack2
+    - [X] Arena - soundtrack2
       - ? https://www.youtube.com/watch?v=OA5oLdbvoLc&ab_channel=IsaacMoring
-    - [ ] Arena - soundtrack3
-- [ ] Efekty sceny - ELISKA
+    - [X] Arena - soundtrack3
+- [X] Efekty sceny - ELISKA
   - [X] Pridani mlhy
   - [ ] Particly v prostredi
   - [X] Nocni scena
