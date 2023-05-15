@@ -172,7 +172,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: a0e68b64ad45e81469bb4cb12b1bedea, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.4
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5705,7 +5705,7 @@ MonoBehaviour:
   groundDrag: 0.5
   jumpForce: 250
   airMultiplier: 5.3
-  rotationSpeed: 3
+  rotationSpeed: 2
   gravity: 40
   jumpKey: 32
   mouseButtonAttack: 0

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Game.MiniGameUtils;
+using Enity;
 
 namespace Game.MiniGame
 {
@@ -26,6 +27,9 @@ namespace Game.MiniGame
         [Header("Prefabs")]
         public GameObject breakableEgg; /** Vejce ktere jde rozbit*/
 
+        [Header("Sounds")]
+        public GameObject tickSoundObj;  /** Zvuk odpoctu "tick" */
+
         /** 
          * Hashmap spawnutych vajec, pokud je vejce zniceno je odstraneno z mapy 
          */
@@ -42,6 +46,8 @@ namespace Game.MiniGame
         private int winScore; /** Skore pozadovane pro vizezstvi */
         private float time; /** Cas ktery ma hrac k dispozici */
 
+        private AudioSource tickSound;  /** Zvuk odpoctu*/
+
         public override bool EndGame()
         {
             Invoke(nameof(Clear), 3.0f);
@@ -54,6 +60,8 @@ namespace Game.MiniGame
                 this.cntx.LocalPlayer.Score += 15f;
                 return true;
             }
+
+            tickSound.Stop();
 
             return false;
         }
@@ -80,6 +88,7 @@ namespace Game.MiniGame
             this.time = this.MAX_TIME_LIMIT;
             this.eggMap.Clear();
             this.toRemove.Clear();
+            this.tickSound = this.tickSoundObj.GetComponent<AudioSource>();
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MG_EggHunt), " init done!"));
         }
 
@@ -100,6 +109,12 @@ namespace Game.MiniGame
             // cas
             this.time -= Time.deltaTime;
             this.time = this.time < 0.0f ? 0.0f : this.time;
+
+            if(this.time <= 10.0) {
+                if(!tickSound.isPlaying) {
+                    tickSound.Play();
+                }
+            }
 
             // time info label refresh
             this.cntx.showTime(GameGlobal.Util.FormatTime(this.time) + "<br>" + score + "/" + this.winScore);

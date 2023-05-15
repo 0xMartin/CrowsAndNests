@@ -8,7 +8,12 @@ namespace Game.MiniGame
 
     /// <summary>
     /// Implemetace hlavni herni logiky teto minihry:
-    /// 1. 
+    /// 1. Jsou nahodne vygenerovane kombinace vajec (barva, pocet)
+    /// 2. Kombinace se postupne po castech zobrazuji hraci na hnizdech
+    /// 3. Pak je urcity cas kdy si hrac musi vyckat a pamatovat si rozmisteni kombinaci na poli hnizd
+    /// 4. Hraci je zobrazena hledana kombinace
+    /// 5. Hrac musi stoupnout na hnizdo s touto hledanou kombinaci pokud ne tak je hnizdo pod nim odstaneno
+    /// 6. Hra ma definovany pocet kol
     /// </summary>
     public class MG_EggMatch : MiniGameObj
     {
@@ -26,6 +31,9 @@ namespace Game.MiniGame
 
         [Header("Prefabs")]
         public GameObject classicEgg; /** Vejce nejde rozbit */
+
+        [Header("Sounds")]
+        public GameObject tickSoundObj;  /** Zvuk odpoctu "tick" */
 
         [Header("Egg Colors")]
         public Material whiteColor;
@@ -66,6 +74,8 @@ namespace Game.MiniGame
 
         private float startTime; /** Prommena pro casovani stavu hry */
 
+        private AudioSource tickSound;  /** Zvuk odpoctu*/
+
         public override bool EndGame()
         {
             // odstraneni predchozich kombinaci vejci ze sceny
@@ -77,6 +87,9 @@ namespace Game.MiniGame
                 this.cntx.LocalPlayer.Score += 30f;
                 return true;
             }
+
+            // zastavy zvuk
+            tickSound.Pause();
 
             return false;
         }
@@ -100,6 +113,7 @@ namespace Game.MiniGame
             this.combinations = new List<List<EggColor>>();
             this.showGroups = new List<bool>();
             this.combMap = new List<int>();
+            this.tickSound = this.tickSoundObj.GetComponent<AudioSource>();
         }
 
         public override void RunGame()
@@ -175,6 +189,9 @@ namespace Game.MiniGame
                         // zobrazi hledanou kombinaci jako obrazek
                         this.GenerateAndShowCombination(this.combinations[this.targetCombination]);
 
+                        // spusti zvuk 
+                        tickSound.Play();
+
                         // prechod do dalsiho stavu
                         startTime = GameGlobal.Util.TimeStart();   
                         this.state = State.Finding; 
@@ -192,6 +209,9 @@ namespace Game.MiniGame
 
                         // odstrani hnizda  
                         HideNests();
+
+                        // zastavy zvuk
+                        tickSound.Pause();
 
                         // prechod do dalsiho stavu
                         startTime = GameGlobal.Util.TimeStart();   

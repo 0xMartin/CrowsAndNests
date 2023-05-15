@@ -737,8 +737,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.2713928, y: 8.293579}
-  m_SizeDelta: {x: 880.7496, y: 1106.1267}
+  m_AnchoredPosition: {x: -0.000030517578, y: -0.6779175}
+  m_SizeDelta: {x: 880.7496, y: 1275.4827}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &131812622
 MonoBehaviour:
@@ -760,12 +760,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Crows And Nests is an 3D game created by the team at SEMPA. Inspired by
-    the popular game Fall Guys, this game invites players into a world where they
-    take on the role of a crow. The objective? Engage in a series of mini-games within
+  m_text: 'Crows And Nests is an 3D game created by the SEMPA team. Inspired by the
+    popular game Fall Guys, this game invites players into a world where they take
+    on the role of a crow. The objective? Engage in a series of mini-games within
     the game arena, which consists of several nests.
 
-    
+
 
     As the player-controlled
     crow, your mission is to successfully complete the objectives of each mini-game.
@@ -773,24 +773,24 @@ MonoBehaviour:
     obstacle courses to puzzles and other exciting tasks, the variety of mini-games
     keeps players engaged and entertained.
 
-    
 
-    The gameplay continues as
-    long as your crow character remains alive and has enough lives remaining. Progressing
+
+    The gameplay continues as long
+    as your crow character remains alive and has enough lives remaining. Progressing
     through the mini-games and earning points allows you to unlock new levels, characters,
     and customization options, providing a rewarding and immersive gaming experience.
 
-    
+
 
     With
     its charming low-poly graphics and addictive gameplay, Crows And Nests offers
     endless hours of fun for players of all ages. So spread your wings, take flight,
     and dive into this unique avian adventure today!
 
-    
 
-    Created by SEMPA
-    team, 2023'
+
+    Created by SEMPA team,
+    2023'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -823,7 +823,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -853,7 +853,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 1.3919678, w: -2.523285}
+  m_margin: {x: 0, y: 0, z: 1.3919678, w: 0.6131897}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1757,7 +1757,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.0003121379}
-  m_SizeDelta: {x: 0, y: 1154.9404}
+  m_SizeDelta: {x: 0, y: 1302.3428}
   m_Pivot: {x: 0, y: 1}
 --- !u!1001 &551346974
 PrefabInstance:
@@ -2399,9 +2399,9 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: 20}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &709330075
 MonoBehaviour:
@@ -3910,9 +3910,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: -17}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1273388871
 MonoBehaviour:
@@ -5298,8 +5298,8 @@ RectTransform:
   m_Father: {fileID: 988732546}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.53141487}
-  m_AnchorMax: {x: 1, y: 0.99999976}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6330,9 +6330,9 @@ RectTransform:
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: -17}
+  m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1851481433
 MonoBehaviour:
@@ -6377,8 +6377,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1624194114}
   m_HandleRect: {fileID: 1624194113}
   m_Direction: 2
-  m_Value: 0.9999996
-  m_Size: 0.46858492
+  m_Value: 0.9999997
+  m_Size: 0.41554934
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6845,7 +6845,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1965621961
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6971,7 +6971,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1967953157
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7728,7 +7728,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}

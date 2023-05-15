@@ -306,6 +306,7 @@ namespace Game
                     {
                         this.state = GameState.GameEnding;
                         startTime = GameGlobal.Util.TimeStart();
+                        this.activeMinigame.EndGame();
                         this.gameCntx.EndGame();
                     }
 

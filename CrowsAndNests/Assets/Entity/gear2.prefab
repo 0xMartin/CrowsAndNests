@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2684050100335151071}
   - component: {fileID: 2684050100335151068}
+  - component: {fileID: 1244147534}
   m_Layer: 0
   m_Name: Gear2
   m_TagString: Untagged
@@ -47,6 +48,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amplitude: 2
   frequency: 1
+--- !u!114 &1244147534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2684050100335151070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf7b8258d307c24f8d7100616b8430f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 30
 --- !u!1001 &2684050100151522650
 PrefabInstance:
   m_ObjectHideFlags: 0
