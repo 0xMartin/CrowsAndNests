@@ -25,6 +25,11 @@ namespace Menu
         public Button buttonAccept;
         public Button buttonReset;
         public Button buttonBack;
+        public Toggle toggleBloom;
+        public Toggle toggleColorGrading;
+        public Toggle toggleVignette;
+        public Toggle toggleChromaticAberration;
+        public Toggle toggleMotionBlur;
 
         [Header("About Section")]
         public Button buttonBack2;
@@ -53,6 +58,8 @@ namespace Menu
             this.mainSection.SetActive(true);
             this.settingsSection.SetActive(false);
             this.aboutSection.SetActive(false);
+
+            LoadConfig();
         }
  
         /*MAIN***************************************************************************************************/
@@ -84,16 +91,42 @@ namespace Menu
         /*SETTINGS***************************************************************************************************/
 
         void SettingsActionAccept() {
-
+            SaveSettings();
         }
 
         void SettingsActionReset() {
-
+            ResetSettings();
         }
 
         void SettingsActionBack() {
             this.mainSection.SetActive(true);
             this.settingsSection.SetActive(false);  
+        }
+
+        void LoadConfig() {
+            this.toggleBloom.isOn = PlayerPrefs.GetInt("Bloom") == 1;
+            this.toggleColorGrading.isOn = PlayerPrefs.GetInt("ColorGrading") == 1;
+            this.toggleVignette.isOn = PlayerPrefs.GetInt("Vignette") == 1;
+            this.toggleChromaticAberration.isOn = PlayerPrefs.GetInt("ChromaticAberration") == 1;
+            this.toggleMotionBlur.isOn = PlayerPrefs.GetInt("MotionBlur") == 1;
+        }
+
+        void SaveSettings() {
+            PlayerPrefs.SetInt("Bloom", this.toggleBloom.isOn ? 1 : 0);
+            PlayerPrefs.SetInt("ColorGrading", this.toggleColorGrading.isOn ? 1 : 0);
+            PlayerPrefs.SetInt("Vignette", this.toggleVignette.isOn ? 1 : 0);
+            PlayerPrefs.SetInt("ChromaticAberration", this.toggleChromaticAberration.isOn ? 1 : 0);
+            PlayerPrefs.SetInt("MotionBlur", this.toggleMotionBlur.isOn ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
+        void ResetSettings() {
+            this.toggleBloom.isOn = true;
+            this.toggleColorGrading.isOn = true;
+            this.toggleVignette.isOn = true;
+            this.toggleChromaticAberration.isOn = true;
+            this.toggleMotionBlur.isOn = true;
+            SaveSettings();
         }
 
         /*ABOUT***************************************************************************************************/
