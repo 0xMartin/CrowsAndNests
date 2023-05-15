@@ -34,6 +34,9 @@ namespace Menu
         [Header("About Section")]
         public Button buttonBack2;
 
+        [Header("Sounds")]
+        public AudioSource clickSound;
+
         void Start()
         {
             // sekce main
@@ -66,24 +69,29 @@ namespace Menu
 
         void MainActionSingle()
         {
+            clickSound.Play();
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Singleplayer clicked"));
             SceneManager.LoadScene(GameGlobal.Scene.ARENA);
         }
 
         void MainActionSettings()
         {
+            clickSound.Play();
             this.mainSection.SetActive(false);
             this.settingsSection.SetActive(true);
+            LoadConfig();
         }
 
         void MainActionAbout()
         {
+            clickSound.Play();
             this.mainSection.SetActive(false);
             this.aboutSection.SetActive(true);
         }
 
         void MainActionExit()
         {
+            clickSound.Play();
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Exit clicked"));
             Application.Quit();
         }
@@ -91,14 +99,17 @@ namespace Menu
         /*SETTINGS***************************************************************************************************/
 
         void SettingsActionAccept() {
+            clickSound.Play();
             SaveSettings();
         }
 
         void SettingsActionReset() {
+            clickSound.Play();
             ResetSettings();
         }
 
         void SettingsActionBack() {
+            clickSound.Play();
             this.mainSection.SetActive(true);
             this.settingsSection.SetActive(false);  
         }
@@ -132,6 +143,7 @@ namespace Menu
         /*ABOUT***************************************************************************************************/
 
         void AboutActionBack() {
+            clickSound.Play();
             this.mainSection.SetActive(true);
             this.aboutSection.SetActive(false); 
         }

@@ -5,6 +5,7 @@ using Game.MiniGameUtils;
 using Cinemachine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Menu;
 
 namespace Game
 {
@@ -74,8 +75,11 @@ namespace Game
         [Header("Sounds")]
         public GameObject tickSoundObj;  /** Zvuk odpoctu "tick" */
 
+        [Header("Pause Menu")]
+        public GameObject pauseMenuObj; /** Canvas vrstva s pause menu, musi mit komponentu <PauseMenu> */
+
         [Header("MiniGames")]
-        public List<GameObject> gamesList;
+        public List<GameObject> gamesList;  /** Seznam vsech miniher*/
 
         /*********************************************************************************************************/
         // LOKALNI PROMENNE
@@ -188,6 +192,16 @@ namespace Game
         void Update()
         {
             if (this.gameCntx == null) return;
+
+            // pause menu
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                PauseMenu pauseMenu = this.pauseMenuObj.GetComponent<PauseMenu>();
+                if (pauseMenu != null)
+                {
+                    pauseMenu.PauseGame();
+                }
+            }
 
             float remaining;
 
