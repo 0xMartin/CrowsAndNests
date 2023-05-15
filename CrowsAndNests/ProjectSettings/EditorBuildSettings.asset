@@ -9,15 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu/MainMenu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/Menu/ArenaMenu.unity
-    guid: 94b22974f12f80c4799530e1cf2149ea
-  - enabled: 1
-    path: Assets/Scenes/Menu/MultiplayerMenu.unity
-    guid: 81e64bec4be171444967794a95602825
-  - enabled: 1
-    path: Assets/Scenes/Menu/SettingsMenu.unity
-    guid: 8504df169de0024409149da2ec4afd8f
-  - enabled: 1
     path: Assets/Scenes/Game/Arena.unity
     guid: 82676d2ccc66ffc4aa5ec7029f7a6980
   - enabled: 1

@@ -10,60 +10,97 @@ namespace Menu
     /// </summary>
     public class MainMenuManager : MonoBehaviour
     {
-        public Button buttonSingle, buttonMulti, buttonSettings, buttonExit;
+        [Header("Sections")]
+        public GameObject mainSection;
+        public GameObject settingsSection;
+        public GameObject aboutSection;
+
+        [Header("Main Section")]
+        public Button buttonSingle;
+        public Button buttonSettings;
+        public Button buttonAbout;
+        public Button buttonExit;
+
+        [Header("Settings Section")]
+        public Button buttonAccept;
+        public Button buttonReset;
+        public Button buttonBack;
+
+        [Header("About Section")]
+        public Button buttonBack2;
 
         void Start()
         {
-            if (buttonSingle != null)
-                buttonSingle.onClick.AddListener(OnClick_ButtonSingle);
-            else
-                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Faild to init listener for Button Singleplayer"));
+            // sekce main
+            buttonSingle.onClick.AddListener(MainActionSingle);
+            buttonSettings.onClick.AddListener(MainActionSettings);
+            buttonExit.onClick.AddListener(MainActionExit);    
+            buttonAbout.onClick.AddListener(MainActionAbout);
 
-            if (buttonMulti != null)
-                buttonMulti.onClick.AddListener(OnClick_ButtonMulti);
-            else
-                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Faild to init listener for Button Multiplayer"));
+            // sekce settings
+            buttonAccept.onClick.AddListener(SettingsActionAccept);
+            buttonReset.onClick.AddListener(SettingsActionReset);
+            buttonBack.onClick.AddListener(SettingsActionBack); 
 
-            if (buttonSettings != null)
-                buttonSettings.onClick.AddListener(OnClick_ButtonSettings);
-            else
-                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Faild to init listener for Button Settings"));
-
-            if (buttonExit != null)
-                buttonExit.onClick.AddListener(OnClick_ButtonExit);
-            else
-                Debug.LogError(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Faild to init listener for Button Exit"));
-
-            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Setup Done"));
+            // sekce about
+            buttonBack2.onClick.AddListener(AboutActionBack); 
         }
 
         void Awake() {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
+            this.mainSection.SetActive(true);
+            this.settingsSection.SetActive(false);
+            this.aboutSection.SetActive(false);
         }
-        
-        void OnClick_ButtonSingle()
+ 
+        /*MAIN***************************************************************************************************/
+
+        void MainActionSingle()
         {
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Singleplayer clicked"));
             SceneManager.LoadScene(GameGlobal.Scene.ARENA);
         }
 
-        void OnClick_ButtonMulti()
+        void MainActionSettings()
         {
-            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Multiplayer clicked"));
-            SceneManager.LoadScene(GameGlobal.Scene.MULTIPLAYER_MENU);
+            this.mainSection.SetActive(false);
+            this.settingsSection.SetActive(true);
         }
 
-        void OnClick_ButtonSettings()
+        void MainActionAbout()
         {
-            Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Settings clicked"));
-            SceneManager.LoadScene(GameGlobal.Scene.SETTINGS_MENU);
+            this.mainSection.SetActive(false);
+            this.aboutSection.SetActive(true);
         }
 
-        void OnClick_ButtonExit()
+        void MainActionExit()
         {
             Debug.Log(GameGlobal.Util.BuildMessage(typeof(MainMenuManager), "Button Exit clicked"));
             Application.Quit();
+        }
+
+        /*SETTINGS***************************************************************************************************/
+
+        void SettingsActionAccept() {
+
+        }
+
+        void SettingsActionReset() {
+
+        }
+
+        void SettingsActionBack() {
+            this.mainSection.SetActive(true);
+            this.settingsSection.SetActive(false);  
+        }
+
+        /*ABOUT***************************************************************************************************/
+
+        void AboutActionBack() {
+            this.mainSection.SetActive(true);
+            this.aboutSection.SetActive(false); 
         }
 
     }
