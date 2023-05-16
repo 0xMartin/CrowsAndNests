@@ -25,10 +25,6 @@
 <img src="./Doc/main_structure.png">
 
 ## TODO
-- [ ] Prostredi
-  - [ ] Vymodelovat lepe vypadajici vez z hodinama (aktualni verze: nic moc obarveni, nakvalitni tvary, malo komplexni, nejlepe pouziti textur ruznych materualu pro obarveni)
-  - [ ] Dalsi dekorativni material do prostredi, kolem areny je zatim relativne prazdno, bylo by dobre prostor nejaky vhodnym zpusoben zaplnit
-  - [ ] Animace pohypu palicek v ptacim hnizde
 - [X] Herni postava
   - [X] Pohybove animace
   - [X] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
@@ -50,23 +46,14 @@
 - [ ] Zvukove efekty - PAVEL
   - [X] Menu - PAVEL
     - [X] Zvuk stiknuti tlacika - PAVEL
-    - [ ] Zvuk spusteni hry - PAVEL
   - [X] Vrana - PAVEL
     - [X] Chuze - PAVEL
     - [X] Vyskok - PAVEL
-    - [ ] Dopad - PAVEL
     - [X] Utok - PAVEL
   - [X] Vejce - PAVEL
     - [X] Rozbiti - PAVEL
-  - [ ] Hnizdo - PAVEL
-    - [ ] Efekt zniceni "pokud hnizdno zmizi z areny / rozbije ho nejaka herni udalost" - PAVEL
-  - [ ] Globalni - PAVEL
-    - [ ] Zvuk vitezstvi- PAVEL
-    - [ ] Zvuk porazky- PAVEL
-    - [ ] Zvuk smrti "pokud vrana vypadne z areny"- PAVEL
-    - [X] Odpocet "tick hodin"- PAVEL
   - [X] Soundtrack - 
-    - [ ] Menu
+    - [X] Menu
     - [X] Arena - soundtrack1 
       - ? https://www.youtube.com/watch?v=FNZMAlO_gi4&list=PLlHY6e7WCV6NaJ5iNMoAWSEasT83GOaDo&index=5&ab_channel=GamesMusic
     - [X] Arena - soundtrack2
@@ -74,7 +61,7 @@
     - [X] Arena - soundtrack3
 - [X] Efekty sceny - ELISKA
   - [X] Pridani mlhy
-  - [ ] Particly v prostredi
+  - [X] Particly v prostredi
   - [X] Nocni scena
   - [X] Prizpusobyt osvetleni
   - [X] Skybox (noc/vesmir/...)
@@ -92,11 +79,10 @@
 - [X] Mini Hry
   - [X] Fall guy Perfect match
   - [X] Bitva o vejce
-  - [ ] Padajici predmety
-  - [ ] ?? napady na dalsi hry
+  - [X] Padajici predmety
 
   
-### Dodatecne vylepseni: 
+### Dodatecne vylepseni do budoucna: 
 * zlepsit vzhled modelu 
 * vytvorit vlastni soundtrack (FL Studio)
 * vytvorit vlastno font pisma pro hru (Adobe Ilustrator)
