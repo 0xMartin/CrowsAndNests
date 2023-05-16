@@ -74,6 +74,8 @@ namespace Game
 
         [Header("Sounds")]
         public GameObject tickSoundObj;  /** Zvuk odpoctu "tick" */
+        public GameObject nestBreakSoundObj;  /** Zvuk rozbiti vejce */
+        public GameObject musicController; /** Reference na music controller */
 
         [Header("Pause Menu")]
         public GameObject pauseMenuObj; /** Canvas vrstva s pause menu, musi mit komponentu <PauseMenu> */
@@ -117,6 +119,7 @@ namespace Game
         private TextMeshProUGUI timeText;           /** Text s aktualni zbyvajicim casem do konce minihry */
         private RawImage imageDisplay;               /** Objekt pro zobrazovani libovolniych obrazku */
         private AudioSource tickSound;              /** Zvuk odpoctu*/
+        private AudioSource nestBreakSound;              /** Zvuk rozbiti vejce*/
 
         void Start()
         {
@@ -134,6 +137,7 @@ namespace Game
             this.imageDisplayObj.SetActive(false);
 
             this.tickSound = this.tickSoundObj.GetComponent<AudioSource>();
+            this.nestBreakSound = this.nestBreakSoundObj.GetComponent<AudioSource>();
         }
 
         void Awake() {
@@ -162,6 +166,10 @@ namespace Game
                 new MiniGameContext.ImageShowRequest(ImageCallback),
                 new MiniGameContext.TimeShowRequest(TimeCallBack)
             );
+            this.gameCntx.MusicController = this.musicController.GetComponent<AudioCrossfade>();
+
+            // spusteni defaultni music "index: 0"
+            this.gameCntx.MusicController.StartCrossfade(0);
 
             // vytvoreni hry
             this.CreateGame("Game 1");
@@ -170,7 +178,7 @@ namespace Game
             this.gameCntx.LocalPlayer = new Player() {
                     Name = "You",
                     Score = 0,
-                    Lives = 3,
+                    Lives = 0, 
                     IsLiving = true,
                     ModelRef = this.playerRef,
                     CinemachineFreeLook = this.cinemachineCam 
@@ -488,6 +496,9 @@ namespace Game
                     if (nestHideFxPrefab != null)
                     {
                         Instantiate(nestHideFxPrefab, pos, rot);
+                        if(!this.nestBreakSound.isPlaying) {
+                            this.nestBreakSound.Play();
+                        }
                     }
                     break;
                 case "show_nest":

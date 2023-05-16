@@ -27,6 +27,7 @@ namespace Game.MiniGame
 
         [Header("Sounds")]
         public GameObject hitSoundObj;  /** Zvuk srazky padajiciho predmetu */
+        private AudioSource hitSound;
 
 
         private enum State {
@@ -50,9 +51,21 @@ namespace Game.MiniGame
 
         public override bool EndGame()
         {
+            this.cntx.MusicController.StartCrossfade(0);
             for(int i = 0; i < this.cntx.Nests.Length; ++i) {
                 this.cntx.ShowNest(i);
             }
+            Destroy(this.objToRemove);
+
+            if(this.cntx.LocalPlayer.IsLiving) {
+                this.cntx.LocalPlayer.Score += 30;
+                this.cntx.AddPlayerLives(this.cntx.LocalPlayer, 1);
+                return true;
+            }
+
+            this.cntx.RandomSpawnPlayer(this.cntx.LocalPlayer);
+            this.cntx.ResetArena();
+
             return false;
         }
 
@@ -64,6 +77,7 @@ namespace Game.MiniGame
         public override void ReinitGame(MiniGameContext cntx)
         {
             this.cntx = cntx;
+            this.hitSound = hitSoundObj.GetComponent<AudioSource>();
             this.existingNests = new List<int>();
             for(int i = 0; i < this.cntx.Nests.Length; ++i) {
                 this.existingNests.Add(i);
@@ -72,13 +86,14 @@ namespace Game.MiniGame
 
         public override bool IsGameOver()
         {
-            // konec hry pokud uz zbyva jen jedno hnizdo
-            return existingNests.Count <= 1;
+            // konec hry pokud uz zbyva jen jedno hnizdo a ja na zacatku rohodovaciho cyklu
+            return existingNests.Count <= 1 && this.state == State.RandomSelect;
         }
 
         public override void RunGame()
         {
             this.state = State.RandomSelect;
+            this.cntx.MusicController.StartCrossfade(1);
         }
 
         public override void UpdateGame()
@@ -138,17 +153,15 @@ namespace Game.MiniGame
             }
 
             // time info label refresh
-            this.cntx.showTime("/" + (this.cntx.Nests.Length - 1));
+            this.cntx.showTime(existingNests.Count.ToString() + "/" + (this.cntx.Nests.Length - 1));
 
-            // drop down
+            // drop down (bez moznosti spawnu)
             foreach(Player p in base.cntx.Players) 
             {
                 if(base.cntx.IsPlayerDropDown(p)) 
                 {
                     Debug.Log(GameGlobal.Util.BuildMessage(typeof(ArenaController), "KILLED: " + p.ToString()));
                     base.cntx.KillPlayer(p);
-                    base.cntx.RandomSpawnPlayer(p);
-                    base.cntx.ClearUsedNestsStatus();    
                 }    
             }
         }
@@ -172,6 +185,9 @@ namespace Game.MiniGame
         private void HandleCollision() {
             if(this.state == State.WaitForCollision) {
                 this.state = State.Hit;
+                if(!this.hitSound.isPlaying) {
+                    this.hitSound.Play();
+                }
             }
         }
 

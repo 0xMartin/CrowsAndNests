@@ -27,6 +27,8 @@ namespace Game.MiniGameUtils
         public bool IsGameRunning {get; protected set;} /** status o tom zda je hra spustna */
         public bool IsGameEnd {get; protected set;} /** status o tom zda je hra u konce */
 
+        public AudioCrossfade MusicController {get; set;} /** Reference na music controller */
+
         // delegat pro pozadavek na vytvoreni efekty (pozadavky zpracovava hlavni ridici skript areny)
         public delegate void FxCreateRequest(string type, Vector3 pos, Quaternion rot); 
         public FxCreateRequest FxCallback { get; protected set; }
@@ -62,6 +64,7 @@ namespace Game.MiniGameUtils
             this.TimeCallback = timeCallback;
             this.YMin = yMin;
 
+            this.MusicController = null;
             this.IsGameRunning = false;
             this.IsGameEnd = false;
             this.Players = new List<Player>();
@@ -94,7 +97,7 @@ namespace Game.MiniGameUtils
 
             // nahodne vybere spawn na kterem se jeste nenachazi zadny hrac
             int rnd = -1;
-            int cnt = 50;
+            int cnt = 999;
             do
             {
                 rnd = UnityEngine.Random.Range(0, Spawns.Length);
@@ -105,7 +108,7 @@ namespace Game.MiniGameUtils
                     SetPlayerCameraFollowPoint(player, this.SpectatorPos, true);
                     return;
                 }
-            } while (UsedSpawns.Contains(rnd));
+            } while (UsedSpawns.Contains(rnd) || !Spawns[rnd].parent.gameObject.activeSelf);
             UsedSpawns.Add(rnd);
 
             // nastavi mu pozici spawnu
