@@ -49,6 +49,9 @@ namespace Game.MiniGame
 
         private float startTime; /** Prommena pro casovani stavu hry */
 
+        private bool RequestedEnd; /** Vyzadani konce hry pokud neni uz dostateny pocet hnizd */
+        private bool End; /** Je konec hry? */
+
         public override bool EndGame()
         {
             this.cntx.MusicController.StartCrossfade(0);
@@ -64,7 +67,7 @@ namespace Game.MiniGame
             }
 
             this.cntx.RandomSpawnPlayer(this.cntx.LocalPlayer);
-            this.cntx.ResetArena();
+            this.cntx.ClearUsedNestsStatus();
 
             return false;
         }
@@ -77,6 +80,8 @@ namespace Game.MiniGame
         public override void ReinitGame(MiniGameContext cntx)
         {
             this.cntx = cntx;
+            this.RequestedEnd = false;
+            this.End = false;
             this.hitSound = hitSoundObj.GetComponent<AudioSource>();
             this.existingNests = new List<int>();
             for(int i = 0; i < this.cntx.Nests.Length; ++i) {
@@ -86,8 +91,12 @@ namespace Game.MiniGame
 
         public override bool IsGameOver()
         {
-            // konec hry pokud uz zbyva jen jedno hnizdo a ja na zacatku rohodovaciho cyklu
-            return existingNests.Count <= 1 && this.state == State.RandomSelect;
+            // konec hry pokud uz zbyva jen jedno hnizdo a ja na zacatku rohodovaciho cyklu (se zpozdenim)
+            return this.End;
+        }
+
+        private void LaterEnd() {
+            this.End = true;
         }
 
         public override void RunGame()
@@ -114,6 +123,11 @@ namespace Game.MiniGame
                         // prechod na dalsi stav
                         this.state = State.ShowAndWait;
                         startTime = GameGlobal.Util.TimeStart();
+                    } else {
+                        if(!RequestedEnd) {
+                            RequestedEnd = true;
+                            Invoke(nameof(LaterEnd), 3.0f);
+                        }
                     }
                     break;
 
