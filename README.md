@@ -10,88 +10,30 @@
 </div>
 
 > Unity version: 2021.3.9f1
-> Lowpoly game
+
+Crows And Nests is a game where the player takes on the role of a crow and engages in various mini-games in the arena. Completing these minigames earns the player scores and lives. Falling from the arena subtracts life. The game is currently designed for single-player mode, with plans to introduce multiplayer support in future versions. This is the initial version of the game, which includes three mini-games: "Egg Hunt", a memory game that involves memorizing combinations of eggs in nests and dodging falling objects.
 
 ## Preview of current version
 
-<img src="./Doc/preview.png">
+<img src="./Doc/img1.png">
 
-## Video
+## Menu
 
-<img src="./Doc/preview.gif" width="100%" alt="Video záznam ze hry">
+The game features a basic menu that allows players to start the game and access game settings. In the current version, players can adjust the rendering quality of the scene.
 
-## Game structure
+<img src="./Doc/img2.png">
 
-<img src="./Doc/main_structure.png">
+## Spectator mode
+
+If the player dies during a mini-game, they will enter spectator mode until the next mini-game begins. In spectator mode, players can observe the ongoing game without active participation.
+
+<img src="./Doc/img3.png">
 
 ## TODO
-- [X] Herni postava
-  - [X] Pohybove animace
-  - [X] Vyladit pohybovou fyziku (opravit big zpetneho odrazu hned pri vyskoku z hnizda)
-  - [ ] Vytvorit skiny
-- [X] Kamera
-  - [X] Limity pohybu v ose Y (kamera se nesmi dostat pod mapu pokud hrac pada dolu)
-  - [ ] Treseni kamery pri ruznych efektech
-- [ ] Design - ELISKA
-  - [X] Vytvorit ikonu hry
-  - [ ] Vytvorit baner hry (nejlip primo vyrenderovat s modelu hry v blenderu + postprodukce)
-- [ ] Menu - PAVEL
-  - [X] 3D scena v pozadi menu
-  - [X] Styl tlacitek a textu
-  - [ ] Settings menu
-  - [X] Main menu
-  - [X] Game settings menu
-  - [X] Game lobby menu
-  - [X] Connect to host menu
-- [ ] Zvukove efekty - PAVEL
-  - [X] Menu - PAVEL
-    - [X] Zvuk stiknuti tlacika - PAVEL
-  - [X] Vrana - PAVEL
-    - [X] Chuze - PAVEL
-    - [X] Vyskok - PAVEL
-    - [X] Utok - PAVEL
-  - [X] Vejce - PAVEL
-    - [X] Rozbiti - PAVEL
-  - [X] Soundtrack - 
-    - [X] Menu
-    - [X] Arena - soundtrack1 
-      - ? https://www.youtube.com/watch?v=FNZMAlO_gi4&list=PLlHY6e7WCV6NaJ5iNMoAWSEasT83GOaDo&index=5&ab_channel=GamesMusic
-    - [X] Arena - soundtrack2
-      - ? https://www.youtube.com/watch?v=OA5oLdbvoLc&ab_channel=IsaacMoring
-    - [X] Arena - soundtrack3
-- [X] Efekty sceny - ELISKA
-  - [X] Pridani mlhy
-  - [X] Particly v prostredi
-  - [X] Nocni scena
-  - [X] Prizpusobyt osvetleni
-  - [X] Skybox (noc/vesmir/...)
-- [X] Postprocessing 
-  - [X] Vyladeni barev obrazu
-- [X] Skript pro rizeni areny
-  - [X] Zakladni struktura
-  - [X] Vstupy skriptu
-  - [X] Hlavni herni smycka
-  - [X] Respawn handler
-  - [X] Spawn handler
-  - [X] Manazer hernich modu
-  - [X] Manazer skore
-  - [X] Cleaning manager
-- [X] Mini Hry
-  - [X] Fall guy Perfect match
-  - [X] Bitva o vejce
-  - [X] Padajici predmety
-
-  
-### Dodatecne vylepseni do budoucna: 
-* zlepsit vzhled modelu 
-* vytvorit vlastni soundtrack (FL Studio)
-* vytvorit vlastno font pisma pro hru (Adobe Ilustrator)
-* vytvorit trailer video ke hre (Premiera + After Effects)
-* publikace na steam 
-* moznost hrani na verejnem serveru ()
-- [ ] Multiplayer LAN
-  - [ ] Lokalni server
-  - [ ] Klient
-  - [ ] Synchronizace dat
-  - [ ] Komponanta pro prenos dat
-  - [ ] Automatizovany vyhledavac serveru v lokalni siti
+* Fix timing of egg breaking, not based on time (activated directly in a certain key frame).
+* Egg breaking using a delegate.
+* Fix player physics.
+* Completely rigid body for the player, more plastic movement, point-based falling, lifted [HARD]...
+* Simplify nest model.
+* Improve tower model, enhance scene appearance, simple particles for nests, optimize lower fog effect.
+* Multiplayer menu (find server, host) -> server finder menu, host server menu -> lobby menu.
