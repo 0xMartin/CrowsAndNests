@@ -30,10 +30,17 @@ If the player dies during a mini-game, they will enter spectator mode until the 
 <img src="./Doc/img3.png">
 
 ## TODO
-* Fix timing of egg breaking, not based on time (activated directly in a certain key frame).
-* Egg breaking using a delegate.
-* Fix player physics.
-* Completely rigid body for the player, more plastic movement, point-based falling, lifted [HARD]...
-* Simplify nest model.
+* Fix timing of egg breaking, not based on time (activated directly in a certain key frame)
+* Egg breaking using a delegate
+* Fix player physics
+* Simplify nest model
 * Improve tower model, enhance scene appearance, simple particles for nests, optimize lower fog effect.
-* Multiplayer menu (find server, host) -> server finder menu, host server menu -> lobby menu.
+* AI oponents
+* Online mode
+* Reducing post production fx
+* Waiting arena ? (dark land, hill, old buildings, magic, ...)
+* Intro ? (when game starting, can be skipped)
+* New minigames:
+  * Guided missiles
+  * Dance
+  * Delivery
