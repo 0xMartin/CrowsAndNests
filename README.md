@@ -17,6 +17,10 @@ Crows And Nests is a game where the player takes on the role of a crow and engag
 
 <img src="./Doc/img1.png">
 
+## Teaser Trailer (YouTube)
+
+[![Crows and Nests Trailer](https://img.youtube.com/vi/r4ZGvOonQCI/0.jpg)](https://www.youtube.com/watch?v=r4ZGvOonQCI)
+
 ## Menu
 
 The game features a basic menu that allows players to start the game and access game settings. In the current version, players can adjust the rendering quality of the scene.
